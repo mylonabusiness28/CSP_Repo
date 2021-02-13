@@ -1,0 +1,10 @@
+channel tremAproxima, tremEntra, tremSai, cancelaLevanta, cancelaAbaixa
+
+CRUZAMENTO = tremAproxima -> tremEntra -> tremSai -> CRUZAMENTO
+         [] cancelaLevanta -> tremAproxima -> cancelaAbaixa -> tremEntra -> tremSai -> CRUZAMENTO
+
+
+-- CRUZAMENTO COM RECURSÃO MÚTUA
+CRUZAMENTO1 = cancelaLevanta -> tremAproxima -> cancelaAbaixa -> ENT 
+         [] tremAproxima -> ENT 
+ENT = tremEntra -> tremSai -> CRUZAMENTO1

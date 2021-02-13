@@ -1,0 +1,7 @@
+channel evento, evento2
+
+PROCESSO_X = evento -> PROCESSO_X
+
+PROCESSO_X2 = evento -> evento2 -> PROCESSO_X2
+
+-- será que é isso???

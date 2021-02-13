@@ -1,0 +1,10 @@
+channel cima, baixo, esquerda, direita
+
+CB = cima -> baixo -> CB
+
+ED = esquerda -> direita -> ED
+
+CBA = {| cima,baixo |}
+EDA = {| esquerda,direita |}
+
+CBED = CB [ CBA || EDA ] ED

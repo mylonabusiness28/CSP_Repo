@@ -1,0 +1,6 @@
+-- Mostrar o grafo no FRD4
+
+channel liga, desliga, aceita, imprime
+
+IMPRESSORA2 = (liga -> aceita -> imprime -> STOP
+         [] desliga -> STOP)

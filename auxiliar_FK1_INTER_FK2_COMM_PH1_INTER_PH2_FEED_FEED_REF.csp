@@ -1,0 +1,287 @@
+---------------------------------------------------------
+-- Auxiliar Functions
+---------------------------------------------------------
+
+inc(x,n) = (x + 1) % n
+dec(x,n) = (x - 1) % n
+
+-- Rename channels in a process using a mapping < (old1, new1), ..., (oldn, newn)>
+
+rename(P, <>) = P
+rename(P, <(c1,c2)>^rs) = rename(P[[c1 <- c2]], rs)
+
+-- Replaces events in a set using the mapping < (old1, new1), ..., (oldn, newn)>
+
+replace_aux(oldc, newc, S) =
+	let other_events = {e | e <- S, not member(e, productions(oldc))}
+	    new_events   = {newc.v | v <- inter(extensions(newc), extensions(oldc)), member(oldc.v, S)}
+	within union (other_events, new_events)
+
+replace(S, <>) = S
+replace(S, <(c1,c2)>^rs) = replace(replace_aux(c1,c2,S),rs)
+
+-- Filters inputs or outputs from a given set of events
+
+filter(inout,S) =
+	if inout == in then inter(allInputs,S) else inter(allOutputs,S)
+
+---------------------------------------------------------
+-- Side Condition FUNCTIONS --
+---------------------------------------------------------
+
+events_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = union(inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+allInputs = Union({ inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED, inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED})
+allOutputs = Union({ outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED, outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED})
+
+HideOutputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED \ outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED
+HideInputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED  = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED \ inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED
+HideAll_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED \ union(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+CollapseOutputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED [[ x <- o | x <- outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED ]] \ allInputs
+
+-- Renaming I/O
+R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(a, b) = seq({(a.x, b.x) | x <- extensions(a), member(a.x, outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)})
+inputs_R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(a,b)  = inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED
+inputs_R_IO_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1(a,b)  = inputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1
+inputs_R_IO_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2(a,b)  = inputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2
+outputs_R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(a,b) = { b.x | x <- extensions(a), member(a.x, outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED) }
+outputs_R_IO_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1(a,b) = { b.x | x <- extensions(a), member(a.x, outputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1) }
+outputs_R_IO_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2(a,b) = { b.x | x <- extensions(a), member(a.x, outputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2) }
+
+
+-- Protocol Implementation
+inputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c)  = inter(inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,{|c|})
+outputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = inter(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,{|c|})
+
+-- Protocol Implementation and renaming
+PROT_IMP_R_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(r)   = rename(FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,r) --modifidado por sarah
+PROT_IMP_R_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1 = rename(PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1,R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(fk.2.1,pfk.1.2)) --modifidado por sarah
+PROT_IMP_R_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2 = rename(PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2,R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(pfk.1.2,fk.2.1)) --modifidado por sarah
+inputs_PROT_IMP_R_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(e,r)   = replace(inputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(e), r)
+outputs_PROT_IMP_R_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(e,r)   = replace(outputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(e), r)
+
+-- Dual Protocol Implementation and renaming R_IO
+DUAL_PROT_IMP_R(P,r) = rename(P, r) --modifidado por sarah
+DUAL_PROT_IMP_R_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1 = rename(DUAL_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1, R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(fk.2.1,pfk.1.2)) --modifidado por sarah
+DUAL_PROT_IMP_R_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2 = rename(DUAL_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2, R_IO_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(pfk.1.2,fk.2.1)) --modifidado por sarah
+
+---------------------------------------------------------
+-- Side Condition PROCESSES --
+---------------------------------------------------------
+
+RUN(A) = [] x:A @ x -> RUN(A)
+CHAOS(A) = STOP |~| ([] x:A @ x -> CHAOS(A))
+
+-- Test if a given condition is met
+channel error
+ERROR = error -> SKIP
+Test(c) = not c & ERROR
+
+-- Used for testing protocols
+-- This is not used in the CSP framework, but will be used in the Circus/CML Framework
+channel out
+channel in
+channel mid
+channel o
+
+CP(a,b) = a -> b -> CP(a,b)
+C(a, P) = (P[[ a <- mid ]] [| {| mid |} |] CP(a,mid)) \ {|mid|}
+CIO(P) = C(in, C(out, P))
+
+--InBufferProt(P,c) =  CIO(P[[ c.in.x  <- i, c.out.y <- o | x  <- extensions(c.in), y  <- extensions(c.out)]])
+InBufferProt_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) =  CIO(FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[[ x  <- in, y <- out | x  <- inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED, y  <- outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED]])
+InBufferProt_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1_R_IO_pfk_1_2(c) =  CIO(PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1_R_IO_pfk_1_2[[ x  <- in, y <- out | x  <- inputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1_R_IO_pfk_1_2, y  <- outputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_fk_2_1_R_IO_pfk_1_2]])
+InBufferProt_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2_R_IO_fk_2_1(c) =  CIO(PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2_R_IO_fk_2_1[[ x  <- in, y <- out | x  <- inputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2_R_IO_fk_2_1, y  <- outputs_PROT_IMP_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED_pfk_1_2_R_IO_fk_2_1]])
+
+-- Channels Projection
+PROJECTION_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(cs) = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED \ (diff(Events, Union({ {| c |} | c <- cs})))
+
+-- Channels
+--INTER_PROT_IMP(P,cs) = ||| c:cs @ apply(PROT_IMP,(P,c))
+--INTER_PROT_IMP(P,cs) = ||| c:cs @ apply(P,c) --modificado por sarah
+
+-- Protocol Implementation
+PROT_IMP_def_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED \ (diff(Events, {|c|}))
+
+COPY (LR) = [] x : dom(LR) @ x -> apply(LR,x) -> COPY (LR)
+BUFF_IO(BF, LR1, LR2) = (BF (LR1) ||| BF (LR2))
+BUFF_IO_1(LR1,LR2) = BUFF_IO(COPY, LR1, LR2)
+
+----------------------------------------
+-- These processes are only used when we have a optimization due to the use of architectural styles
+-- Client-Server Specification
+
+CS(c) = CS_CLIENT(c) [] CS_SERVER(c)
+CS_CLIENT(c) = c.in?v1 -> c.out?v2 -> CS_CLIENT(c)
+CS_SERVER(c) = c.out?v1 -> c.in?v2 -> CS_SERVER(c)
+
+----------------------------------------
+-- Protocol does not speak anything else
+----------------------------------------
+NOT(c) = diff(Events, {| c |})
+PRUNE(A) = [] ev: A @ ev -> STOP
+ProtCheck(P,c) = P [| NOT(c) |] PRUNE(NOT(c))
+
+----assert ProtCheck(<PROCESS>,<CHANNEL>) :[deadlock free [FD]]
+----------------------------------------
+-- "... and nothing else matters..."
+----------------------------------------
+----assert <PROCESS> [| Events |] (<PROCESS> ||| RUN(NOT(<CHANNEL>))) [T= <PROCESS>
+----assert <PROCESS> [T= <PROCESS> [| Events |] (<PROCESS> ||| RUN(NOT(<CHANNEL>))) 
+
+----------------------------------------
+-- Input Determinism
+----------------------------------------
+channel clunk
+AllButClunk = diff(Events, {clunk})
+Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED [| AllButClunk |] Clunker
+Clunker = [] x:AllButClunk @ x -> clunk -> Clunker
+
+Repeat = [] x:AllButClunk @ x -> x -> Repeat
+
+RHS_InputDet_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = (Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[|{clunk}|]Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED) \ {clunk} [|AllButClunk|] Repeat
+
+-- Original Lazic`s Algorithm (adapted by Roscoe)
+LHS' = STOP |~| ([] x:AllButClunk @ x -> x -> LHS')
+
+-- Changed Lazic`s Algorithm (proposed by Roscoe) to consider only a particular set of events
+Deterministic(S) = 
+    STOP 
+    |~|     
+    ([] x:AllButClunk @ x -> (if member(x,S) 
+                        then x -> Deterministic(S)
+                        else (STOP |~| x -> Deterministic(S))))
+
+LHS_InputDet_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = Deterministic(inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+
+--assert LHS_InputDet(<PROCESS>) [F= RHS_InputDet(<PROCESS>)
+
+-----------------
+-----------------
+
+----------------------------------------
+-- Strong output decisive
+----------------------------------------
+
+-- Roscoe's Strong output decisive
+SSET_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = inter({|c|},outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+F_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED [| SSET_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) |] S(SSET_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c)) 
+G_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED [| SSET_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) |] CHAOS(SSET_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c))
+S(X)   = 
+	if (card(X) > 1) then
+		(|~| x:X @ [] y:diff(X, {x}) @ y -> S(X))
+	else 
+		(STOP |~| ([] x:X @ x -> S(X)))
+
+--assert F(<PROCESS>,<CHANNEL>) [F= G(<PROCESS>,<CHANNEL>)
+
+----------------------------------------------------
+-- Bill's Solution for Rodrigo's Output Decisiveness
+----------------------------------------------------
+
+----------------------------------------------------
+-- Part A. If there is a trace s^<c.x>, after s, it cannot refuse all events on {|c|} 
+
+-- Outputs events with same prefixing of a given output event
+-- Outputs events with same prefixing of a given output event
+
+chan_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(ev) = 
+    inter(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,
+          Union({ {| fk.1.1 | member (ev, {|fk.1.1|})|},
+{| fk.1.2 | member (ev, {|fk.1.2|})|},
+{| fk.2.2 | member (ev, {|fk.2.2|})|},
+{| fk.2.1 | member (ev, {|fk.2.1|})|},
+{| pfk.1.2 | member (ev, {|pfk.1.2|})|},
+{| pfk.1.1 | member (ev, {|pfk.1.1|})|},
+{| pfk.2.1 | member (ev, {|pfk.2.1|})|},
+{| pfk.2.2 | member (ev, {|pfk.2.2|})|} })
+)
+
+chan_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(ev) = 
+    inter(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,
+          Union({ {| fk.1.1 | member (ev, {|fk.1.1|})|},
+{| fk.1.2 | member (ev, {|fk.1.2|})|},
+{| fk.2.2 | member (ev, {|fk.2.2|})|},
+{| fk.2.1 | member (ev, {|fk.2.1|})|},
+{| pfk.1.2 | member (ev, {|pfk.1.2|})|},
+{| pfk.1.1 | member (ev, {|pfk.1.1|})|},
+{| pfk.2.1 | member (ev, {|pfk.2.1|})|},
+{| pfk.2.2 | member (ev, {|pfk.2.2|})|} })
+)
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+--PREVIOUS DEFINITIONS
+
+--One2Many(S) = 
+--    ([] x:diff(Events,union(S, {clunk})) @ x -> One2Many(S))
+--    [] ([] c:S @ [] x:{|c|} @ x -> One2Many'(S,c,x))
+--One2Many'(S,c,x) = [] y:{|c|} @ y -> if x==y then One2Many(S) else STOP
+--RHS_OutputDec_A_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = 
+--    (Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[|diff(Events, outputs(P))|]Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED) \ {clunk} 
+--    [| AllButClunk |] 
+--    One2Many(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+--RHS_OutputDec_A_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = 
+--    (Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[|diff(Events, outputs(P))|]Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED) \ {clunk} 
+--    [| AllButClunk |] 
+--    One2Many(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+
+-- Definition above is sliglty wrong because One2Many'(S,c,x) enforces the following event to be a repetition 
+-- if the given c is not a channel bout the full event.
+
+--NEW DEFINITIONS
+
+One2Many_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = 
+    ([] x:diff(Events,union(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED, {clunk})) @ x -> One2Many_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+    [] ([] c:outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED @ [] x:{|c|} @ x -> One2Many_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED'(c,x))
+
+One2Many_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED'(c,x) = [] y:chan_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) @ y -> if x==y then One2Many_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED else STOP
+
+RHS_OutputDec_A_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = 
+    (Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[|diff(Events, outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)|]Clunking_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED) \ {clunk} 
+    [| AllButClunk |] 
+    One2Many_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED
+
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+
+LHS_OutputDec_A_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = 
+            STOP 
+            |~|
+            ([] x:diff(Events,union(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED, {clunk})) @ x -> LHS_OutputDec_A_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)
+            [] 
+            ([] x:outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED @ x -> (|~| y:chan_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(x) @ y -> LHS_OutputDec_A_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED))
+
+
+--assert LHS_OutputDec_A(<PROCESS>) [F= RHS_OutputDec_A(<PROCESS>)
+
+----------------------------------------------------
+-- Part B. After trace s^<c.x> it might refuse all events on {|c|} \ {c.x}
+
+FirstCopy_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED [| AllButClunk |] DoubleClunker
+SecondCopy_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED = FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED [| AllButClunk |] clunk -> DoubleClunker
+
+DoubleClunker = [] x:AllButClunk @ x -> clunk -> clunk -> DoubleClunker
+
+LHS_Test(S) =
+    [] x:S @ 
+        x -> (x -> LHS_Test(S) [>
+                      ([] y:diff(S, {x}) @ y -> STOP)
+              )
+            [] ([] y:diff(Events,S) @ y -> y -> LHS_Test(S))
+LHS_OutputDec_B_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = (FirstCopy_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[|{clunk}|]SecondCopy_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)\{clunk} [|Events|] LHS_Test(inter({|c|}, outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED))
+
+RHS_Test(S) =
+    [] x:S @ 
+        x -> 
+            ( ([] y:S @ y -> if x==y then RHS_Test(S) else STOP) 
+              |~| STOP )
+            [] ([] y:diff(Events,S) @ y -> y -> RHS_Test(S))
+RHS_OutputDec_B_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = (FirstCopy_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED[|{clunk}|]SecondCopy_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED)\{clunk} [|Events|] RHS_Test(inter({|c|}, outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED))
+
+
+outputsCC_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = inter(outputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,{|c|})
+inputsCC_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED(c) = inter(inputs_FK1_INTER_FK2_COMM_PH1_INTER_PH2_FEED_FEED,{|c|})

@@ -1,0 +1,12 @@
+channel ent5c, saida1c, saida2c
+
+T5C = ent5c -> SAIDA5C
+SAIDA5C = saida2c -> SAIDA3C
+             [] saida1c -> SAIDA4C
+SAIDA4C = saida2c -> SAIDA2C
+             [] saida1c -> SAIDA3C
+SAIDA3C = saida2c -> SAIDA1C
+             [] saida1c -> SAIDA2C
+SAIDA2C = saida2c -> STOP
+             [] saida1c -> SAIDA1C
+SAIDA1C = saida1c -> STOP

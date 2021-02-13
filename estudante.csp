@@ -1,0 +1,21 @@
+channel passar, reprovar, graduar
+channel ano:{1..4}
+
+ESTUDANTE = ano.1 -> passar -> 
+                ano.2 -> passar ->
+                  ano.3 -> passar -> 
+                    ano.4 -> passar ->
+                        graduar -> STOP
+
+ESTUDANTE1 = 
+ ano.1 -> 
+    (passar -> ESTUDANTE2 [] reprovar -> ESTUDANTE1)
+ESTUDANTE2 = 
+ ano.2 -> 
+    (passar -> ESTUDANTE3 [] reprovar -> ESTUDANTE2)
+ESTUDANTE3 = 
+ ano.3 -> 
+    (passar -> ESTUDANTE4 [] reprovar -> ESTUDANTE3)
+ESTUDANTE4 = 
+ ano.4 -> (passar -> FORMANDO [] reprovar -> ESTUDANTE4) 
+FORMANDO = graduar -> STOP

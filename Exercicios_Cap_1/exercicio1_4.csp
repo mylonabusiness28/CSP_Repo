@@ -1,0 +1,4 @@
+channel pedido, hamburger, real75, frango, real95, entrega
+
+FOODTRUCK = pedido -> hamburger -> real75 -> entrega -> FOODTRUCK
+         [] pedido -> frango -> real95 -> entrega -> FOODTRUCK

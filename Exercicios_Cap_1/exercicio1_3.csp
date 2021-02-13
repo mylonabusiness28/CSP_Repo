@@ -1,0 +1,5 @@
+channel entrada1, entrada2, entrada3: {0..2}
+channel saida: {0..8}
+
+MULT = entrada1?x -> entrada2?y -> entrada3?z -> saida!(x*y*z) -> STOP
+

@@ -1,0 +1,12 @@
+datatype A = yes | no
+
+channel add, query : {0..2}
+channel answer : A
+
+CONJUNTO = CONJ({})
+
+CONJ(S) = add?x -> CONJ(union(S, {x})) -- declaração de união entre conjuntos
+         [] query?y ->
+         (if member(y, S) -- função que testa se o valor y pertence ao conjunto S
+         then answer!yes -> CONJ(S)
+         else answer!no -> CONJ(S))

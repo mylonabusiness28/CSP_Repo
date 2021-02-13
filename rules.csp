@@ -1,0 +1,21 @@
+---------------------------------------------------------
+-- COMMUNICATION RULES --
+---------------------------------------------------------
+
+INTER(P,Q) = P ||| Q
+COMM(P,Q,c1,c2) = (P ||| Q) [| {| c1,c2 |} |] BFIO(c1,c2)
+FEED(P,c1,c2) = P[| {| c1,c2 |} |] BFIO(c1,c2)
+REF(P,c1,c2) =  P[| {| c1,c2 |} |] BFIO(c1,c2)
+
+-- BUFFERS
+BUFFER(ci,co, n) =
+  let
+    B(<>) = ci?x -> B(<x>)
+    B(s)  =    (co!head(s) -> B(tail(s)))
+              [] (#s<n & ci?x -> B(s^<x>))
+  within B(<>)
+-- BFIO(c1,c2) = BUFFER(c1, c2,1) ||| BUFFER(c2, c1,1)
+
+BFIO(c1,c2) = BUFFER(c1, c2,1) ||| BUFFER(c2, c1,1)
+
+-- ||| BUFFER(c1.ack, c2.ack,1) ||| BUFFER(c2.req, c1.req,1)

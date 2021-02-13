@@ -1,0 +1,9 @@
+channel press, finish
+
+PROCESSO = VAI(0)
+
+VAI(0) = press -> VAI(1)
+
+VAI(i) = press -> VAI(i + 1)
+        [] finish -> VAI(i)
+        [] finish -> STOP

@@ -1,0 +1,12 @@
+-- Servidor de Raiz Quadrada
+channel entrada: {0..16}
+channel saida: {0..4}
+
+RAIZ = entrada?x -> saida!sqr(x) -> RAIZ
+
+sqr(n) = sqr_aux(n,0)
+
+sqr_aux(n,x) = 
+            if ((x+1)*(x+1)) > n
+            then x
+            else sqr_aux(n,x+1)

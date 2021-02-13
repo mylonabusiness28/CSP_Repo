@@ -1,0 +1,38 @@
+channel ano1, ano2, ano3, ano4, passar, reprovar, formatura, presente, premio
+
+S = {| ano1, ano2, ano3, ano4, passar, reprovar, formatura |}
+
+P = {| passar, presente |}
+
+C = {| passar, reprovar, premio |}
+
+ESTUDANTE = ano1 -> (passar -> ANO2 [] reprovar -> ESTUDANTE)
+
+ANO2 = ano2 -> (passar -> ANO3 [] reprovar -> ANO2)
+
+ANO3 = ano3 -> (passar -> ANO4 [] reprovar -> ANO3)
+
+ANO4 = ano4 -> (passar -> formatura -> STOP [] reprovar -> ANO4)
+
+PAIS = passar -> presente -> PAIS
+
+
+
+UNI = reprovar -> SEMPREMIO [] passar -> C1
+
+C1 = reprovar -> SEMPREMIO [] passar -> C2
+
+C2 = reprovar -> SEMPREMIO [] passar -> C3
+
+C3 = reprovar -> SEMPREMIO [] passar -> premio -> STOP
+
+SEMPREMIO = reprovar -> SEMPREMIO [] passar -> SEMPREMIO
+
+
+SISTEMA = (ESTUDANTE [ S || P ] PAIS) [ union(S,P) || C ] UNI
+
+
+UNI2 = ???
+
+SISTEMA2 = (ESTUDANTE [ S || P ] PAIS) [ union(S,P) || C ] UNI2
+

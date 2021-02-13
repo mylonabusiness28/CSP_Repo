@@ -1,0 +1,16 @@
+channel ent1real, saida1c, saida2c
+
+Saida = {| saida1c, saida2c |}
+
+T1R = ent1real -> SAIDA_T(100)
+
+SAIDA(c,n) = c -> if (c==saida2c)
+                  then SAIDA_T(n-2)
+                  else SAIDA_T(n-1)
+
+SAIDA_T(n) =  if (n >= 2)
+              then [] c:Saida @ c -> SAIDA(c,n)
+              else if (n >= 1)
+                 then saida1c -> SAIDA_T(n-1)
+                 else STOP
+                 

@@ -1,0 +1,7 @@
+-- Mostrar o grafo no FRD4
+
+datatype T = a | b | c
+
+channel in, out : T 
+
+COPY = in?x -> out!x -> COPY

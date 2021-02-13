@@ -1,0 +1,38 @@
+-- 1. Gravador de Vídeo
+
+channel gravar, reproduzir, ligar, desligar
+
+VIDEOK7 = ligar -> LIGADO
+
+LIGADO =  reproduzir -> LIGADO
+        [] gravar -> LIGADO
+        [] desligar -> VIDEOK7
+
+-- 2. Maquina de Vendas 
+
+channel on, off, real2, real4, obj1, obj2, entrega
+
+HANBAIKI = on -> VENDA 
+         [] off -> STOP
+
+VENDA = real2 -> obj1 -> entrega -> VENDA
+        [] real4 -> obj2 -> entrega -> VENDA
+
+-- 3. Caixa Eletrônico
+
+channel caixa_on, caixa_off, in_cartao, in_senha, out_dinheiro, out_comprovante, leitor_cod_barra
+
+CAIXA = caixa_on -> SAQUE
+     [] caixa_on -> PAGAMENTO
+     [] caixa_off -> STOP
+
+SAQUE = in_cartao -> in_senha?x -> 
+        (if x == y
+        then out_dinheiro -> CAIXA 
+        else CAIXA)
+
+PAGAMENTO = in_cartao -> leitor_cod_barra -> out_comprovante -> CAIXA
+
+-- 4. Computador pessoal
+
+-- 5. Um Chip de computador 
