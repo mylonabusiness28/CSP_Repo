@@ -1,9 +1,9 @@
-channel press, finish
+channel press 
+channel finish: Int
 
-PROCESSO = VAI(0)
+limite = 10
 
-VAI(0) = press -> VAI(1)
+PROCESSO = GO(0)
 
-VAI(i) = press -> VAI(i + 1)
-        [] finish -> VAI(i)
-        [] finish -> STOP
+GO(i) = (i < limite & press -> GO(i + 1))
+        [] finish!i -> STOP

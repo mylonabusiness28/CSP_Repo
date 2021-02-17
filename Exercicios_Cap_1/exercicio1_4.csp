@@ -1,4 +1,9 @@
-channel pedido, hamburger, real75, frango, real95, entrega
+datatype FOOD = burguer | chicken
 
-FOODTRUCK = pedido -> hamburger -> real75 -> entrega -> FOODTRUCK
-         [] pedido -> frango -> real95 -> entrega -> FOODTRUCK
+channel order, receive:FOOD
+channel pay: {0..100}
+
+FASTFOOD = order?x -> pay!payment(x) -> receive!x -> FASTFOOD
+
+payment(burguer) = 75
+payment(chicken) = 95

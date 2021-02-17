@@ -1,5 +1,10 @@
-channel entrada1, entrada2, entrada3: {0..2}
-channel saida: {0..8}
+channel in1, in2, in3: {0..3}
+channel out: {0..100}
 
-MULT = entrada1?x -> entrada2?y -> entrada3?z -> saida!(x*y*z) -> STOP
-
+MULT(valor1, valor2, valor3) =
+    valor1 < 0 & in1?x -> MULT(x, valor2, valor3)
+    [] valor2 < 0 & in2?x -> MULT(valor1, x, valor3)
+    [] valor3 < 0 & in3?x -> MULT(valor1, valor2, x)
+    [] valor1 >= 0 and valor2 >= 0 and valor3 >= 0 & out!(valor1*valor2*valor3) -> MULTIPLICAR
+    
+MULTIPLICAR = MULT(-1, -1, -1)
