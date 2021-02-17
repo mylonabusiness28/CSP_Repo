@@ -1,0 +1,12 @@
+channel coat_on, coat_off
+channel store, retrieve
+channel eat, enter
+
+ATT = coat_off -> store -> ATT
+     [] retrieve -> coat_on -> ATT
+
+CUST = enter -> coat_off -> eat -> coat_on -> CUST
+
+REST = ATT [coat_off <-> coat_on] CUST
+
+-- what??

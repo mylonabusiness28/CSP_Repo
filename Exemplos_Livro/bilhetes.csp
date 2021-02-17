@@ -1,0 +1,7 @@
+channel on, off, recife, fortaleza, real50, bilhete
+
+MAQUINA = on -> BILHETES
+
+BILHETES =   recife -> real50 -> bilhete -> BILHETES
+         [] fortaleza -> real50 -> real50 -> bilhete -> BILHETES
+         [] off -> MAQUINA

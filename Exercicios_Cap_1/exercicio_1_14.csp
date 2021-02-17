@@ -1,0 +1,18 @@
+-- Exercicio 1.14 Labirinto
+
+channel east, west, north, south
+
+channel position, in, out:(Int,Int)
+
+MAZE3 = in?walk(x,y) -> in!walk(x,y) -> if (walk(x,y) == {4,4})
+                                        then out 
+                                        else MAZE3
+
+walk(x,y) = walk_act(0,0)
+
+walk_act(i,j) = position.(i,j) -> walk_act(i,j)
+            [] east -> walk_act(i,j+1)
+            [] north -> walk_act(i+1,j)
+            [] west -> walk_act(i,j-1)
+            [] south -> walk_act(i-1,j)
+

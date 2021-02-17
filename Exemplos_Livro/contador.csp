@@ -1,0 +1,8 @@
+channel incrementar, decrementar
+
+CONTADOR = CONT(0)
+
+CONT(0) = incrementar -> CONT(1)
+
+CONT(i) = incrementar -> CONT(i + 1)    
+         [] decrementar -> CONT (i - 1)
