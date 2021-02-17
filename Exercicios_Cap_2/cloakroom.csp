@@ -1,0 +1,24 @@
+datatype o_f = on | off
+
+channel coat : o_f
+channel store, retrieve
+channel eat, enter
+
+ATT = coat.off -> store -> ATT 
+     []retrieve -> coat.on -> ATT
+
+CUST = enter -> coat.off -> eat -> coat.on -> CUST
+
+COAT = {|coat, store, retrieve|}
+FEED = {|enter, coat, eat|}
+
+REST = ATT [COAT || FEED] CUST
+
+-- Solução para o exercicio 2.2
+
+ATT2 = coat.off -> store -> retrieve -> coat.on -> ATT2
+-- Faz sentido remover a opção de escolha se so existir um cliente no restaurante.
+
+CUST2 = enter -> coat.off -> eat -> coat.on -> CUST2
+
+REST2 = ATT2 [COAT || FEED] CUST2

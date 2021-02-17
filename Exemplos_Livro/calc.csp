@@ -1,0 +1,7 @@
+channel in, out, c
+
+CALCg = in?x : Int -> c!g(x) -> CALCf
+
+CALCf = c?y : Int -> out!f(y) -> CALCf
+
+F(G(X)) = CALCg [|in , c , out|] CALCf

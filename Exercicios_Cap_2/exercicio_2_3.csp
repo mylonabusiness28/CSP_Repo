@@ -1,0 +1,23 @@
+datatype tools = easel | box
+
+channel drop, get : tools
+channel paint
+
+ISABELLA = get.box -> get.easel -> paint ->
+           drop.box -> drop.easel -> ISABELLA 
+         []
+           get.easel -> get.box -> paint ->
+           drop.easel -> drop.box -> ISABELLA
+
+KATE =     get.box -> get.easel -> paint ->
+           drop.box -> drop.easel -> KATE 
+         []
+           get.easel -> get.box -> paint ->
+           drop.easel -> drop.box -> KATE
+
+EASEL = {|get, drop, paint|}      
+BOX = {|get, drop, paint|}
+--ISABELLA_ACT = {|get, drop, paint|}
+--KATE_ACT = {|get, drop, paint|}
+      
+PAINTING =  ISABELLA [BOX || EASEL] KATE
