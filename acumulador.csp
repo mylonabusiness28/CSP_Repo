@@ -1,8 +1,0 @@
-channel query, add : {0..3}
-channel reset
-
-ACUMULADOR = TOT(0)
-
-TOT(i) = (query!i -> TOT(i))
-         [] (add?x -> TOT((i + 1)%4)) -- % também representa o resto da divisão
-         [] (reset -> TOT(0))

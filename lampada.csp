@@ -1,4 +1,0 @@
-channel liga, desliga
-
-LAMPADA = liga -> LIGA
-LIGA = desliga -> STOP

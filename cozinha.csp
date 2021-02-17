@@ -1,7 +1,0 @@
-datatype I = arroz | feijão | carne
-datatype 
-
-channel porta : I 
-
-COZINHA = porta?x -> tannoy?y -> balcao!y -> COZINHA
-
