@@ -5,4 +5,5 @@ TICKET = cash -> ticket -> TICKET
 CHANGE = cash -> change -> CHANGE
 
 
-MACHINE = TICKET [{cash, ticket} || {cash,change}] CHANGE
+MACHINE = TICKET [{cash, ticket} || {cash,change}] CHANGE -- também funciona escrevendo direto nos colchetes
+                                                          -- 

@@ -1,0 +1,30 @@
+channel select, pay, leave, enter
+
+SHOPPING = select -> SHOPPING 
+        [] pay -> SHOPPING 
+        [] leave -> enter -> SHOPPING
+
+SECURITY = select -> WATCH 
+        [] pay -> SECURITY 
+        [] leave -> SECURITY
+
+WATCH = select -> WATCH 
+        [] pay -> SECURITY
+
+SECURE_SHOP = (enter -> SHOPPING) [{enter,leave,select,pay} || {leave,select,pay}] SECURITY
+
+BROWSING = select -> TILL
+
+TILL = select -> TILL
+    [] pay -> BROWSING
+
+SHOP = SECURE_SHOP [{enter,leave,select,pay} || {select,pay}] BROWSING
+
+DCOSTUMER = enter -> select -> (pay -> leave -> DCOSTUMER |~| leave -> DCOSTUMER)
+
+SHOP2 = SECURE_SHOP [{enter,leave,select,pay} || {enter,leave,select,pay}] DCOSTUMER
+
+-- O comportamento esperado é de que o comprador desonesto consiga sair sem pagar, mas olhando o grafo gerado no FDR não vi essa opção
+
+-- Quando modifica-se a escolha externa pela escolha interna surge um deadlock do grafo gerado pelo FDR, no momento onde o comprador desonesto
+-- escolhe uma mercadoria e não paga antes de ir embora

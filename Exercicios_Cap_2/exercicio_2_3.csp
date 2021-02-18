@@ -1,9 +1,9 @@
 datatype tools = easel | box
 
-channel drop, get : tools
+channel drop, get : tools 
 channel paint
 
-ISABELLA = get.box -> get.easel -> paint ->
+ISABELLA = get.box -> get.easel -> paint -> -- Isabela e Kate executam os mesmos eventos sobre os mesmos objetos
            drop.box -> drop.easel -> ISABELLA 
          []
            get.easel -> get.box -> paint ->
@@ -15,9 +15,11 @@ KATE =     get.box -> get.easel -> paint ->
            get.easel -> get.box -> paint ->
            drop.easel -> drop.box -> KATE
 
-EASEL = {|get, drop, paint|}      
+EASEL = {|get, drop, paint|}      -- não sei se essa é a forma certa de declarar a sincronia dos eventos
 BOX = {|get, drop, paint|}
 --ISABELLA_ACT = {|get, drop, paint|}
 --KATE_ACT = {|get, drop, paint|}
       
 PAINTING =  ISABELLA [BOX || EASEL] KATE
+
+-- acho que era para sicronizar os 4, mas não achei uma forma de fazer funcionar

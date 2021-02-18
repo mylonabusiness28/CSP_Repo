@@ -1,0 +1,4 @@
+channel min, max
+channel x,y : Int
+
+CELLij = hij?x -> vij?y -> -- como é que escreve isso????

@@ -17,7 +17,7 @@ REST = ATT [COAT || FEED] CUST
 -- Solução para o exercicio 2.2
 
 ATT2 = coat.off -> store -> retrieve -> coat.on -> ATT2
--- Faz sentido remover a opção de escolha se so existir um cliente no restaurante.
+-- Faz sentido remover a opção de escolha se só existir um cliente no restaurante.
 
 CUST2 = enter -> coat.off -> eat -> coat.on -> CUST2
 

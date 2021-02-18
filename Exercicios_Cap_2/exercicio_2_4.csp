@@ -1,0 +1,16 @@
+-- Exemplo 2.18 Loja de Livros
+
+channel lodge, issue_chit, recieve_receipt, claim
+channel recieve_chit, payment, issue_receipt
+
+
+BOOK = lodge -> issue_chit -> BOOK          -- o cliente deixa o livro no balcão de venda recebe a nota de pagamento
+    [] recieve_receipt -> claim -> BOOK     -- no caixa efetua o pagamento e troca o recibo pelo livro
+
+CASHIER = recieve_chit -> payment -> issue_receipt -- a nota do livro é emitida pelo vendedor antes de ser paga no caixa
+
+CHIT = issue_chit -> (CHIT ||| recieve_chit -> SKIP)
+
+RECEIPT = issue_receipt -> (RECEIPT ||| recieve_receipt -> SKIP)
+
+PAYMENT = CASHIER || BOOK || CHIT || RECEIPT
