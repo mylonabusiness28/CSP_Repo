@@ -27,9 +27,11 @@ BOX = isabella.get.box -> isabella.drop.box -> BOX [] kate.get.box -> kate.drop.
 
 ALPHA_EASEL = {isabella.get.easel, isabella.drop.easel, kate.get.easel, kate.drop.easel}
 ALPHA_BOX = {isabella.get.box, isabella.drop.box, kate.get.box, kate.drop.box}
+
 ALPHA_ISABELLA = {|isabella|} -- essa notação realiza todos os eventos a partir do canal isabella
 ALPHA_KATE = {|kate|}
-ALPHA_EASEL_BOX = union(ALPHA_EASEL,ALPHA_BOX)
+
+ALPHA_EASEL_BOX = union(ALPHA_EASEL,ALPHA_BOX) -- aqui usei a função de unir os conjuntos de eventos descritos acima
 ALPHA_ISABELLA_KATE = union(ALPHA_ISABELLA,ALPHA_KATE)
 
 EASEL_BOX = EASEL[ALPHA_EASEL ||| ALPHA_BOX]BOX
@@ -37,5 +39,5 @@ EASEL_BOX = EASEL[ALPHA_EASEL ||| ALPHA_BOX]BOX
 ISABELLA_KATE = ISABELLA[{|isabella|} || {|kate|}]KATE
      
 PAINTING =  ISABELLA_KATE[ALPHA_ISABELLA_KATE || ALPHA_EASEL_BOX]EASEL_BOX
--- acho que era para sicronizar os 4, mas não achei uma forma de fazer funcionar
+-- acho que era para sicronizar os 4, mas não achei uma outra forma de fazer funcionar
 -- 

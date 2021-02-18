@@ -1,0 +1,15 @@
+datatype rota = A | B
+
+channel pay : {0..100}
+channel alight, board : rota
+channel bus : {0..111}
+
+
+SERVICE = bus.37 -> SERVICE 
+          [] bus.111 -> SERVICE
+
+BUS_37 = board.A -> (pay.90 -> alight.B -> STOP [] alight.A ->STOP)
+
+BUS_111 = board.A -> (pay.70 -> alight.B -> STOP [] alight.A ->STOP)
+
+-- perguntar para o professor se na expressão algebrica o "|" significa "[]"
