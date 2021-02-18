@@ -1,16 +1,26 @@
 -- Exemplo 2.18 Loja de Livros
 
-channel lodge, issue_chit, recieve_receipt, claim
-channel recieve_chit, payment, issue_receipt
+datatype books = book1 | book2
+
+channel lodge, issue_chit, recieve_receipt, claim : books
+channel recieve_chit, payment, issue_receipt : books
 
 
-BOOK = lodge -> issue_chit -> BOOK          -- o cliente deixa o livro no balcão de venda recebe a nota de pagamento
-    [] recieve_receipt -> claim -> BOOK     -- no caixa efetua o pagamento e troca o recibo pelo livro
+BOOK = lodge?x -> issue_chit.x -> BOOK          -- o cliente deixa o livro no balcão de venda recebe a nota de pagamento
+    [] recieve_receipt?x -> claim.x -> BOOK     -- no caixa efetua o pagamento e troca o recibo pelo livro
 
-CASHIER = recieve_chit -> payment -> issue_receipt -- a nota do livro é emitida pelo vendedor antes de ser paga no caixa
+ALPHA_BOOK = {|lodge, issue_chit, recieve_receipt, claim|} --
 
-CHIT = issue_chit -> (CHIT ||| recieve_chit -> SKIP)
+CASHIER = recieve_chit?x -> payment.x -> issue_receipt.x -> CASHIER -- a nota do livro é emitida pelo vendedor antes de ser paga no caixa
 
-RECEIPT = issue_receipt -> (RECEIPT ||| recieve_receipt -> SKIP)
+ALPHA_CASHIER = {|recieve_chit, payment, issue_receipt|} 
 
-PAYMENT = CASHIER || BOOK || CHIT || RECEIPT
+CHIT = issue_chit?x -> (CHIT ||| recieve_chit.x -> SKIP)
+
+ALPHA_CHIT = {|issue_chit, recieve_chit|}
+
+RECEIPT = issue_receipt?x -> (RECEIPT ||| recieve_receipt.x -> SKIP)
+
+ALPHA_RECEIPT = {|issue_receipt, recieve_receipt|}
+
+PAYMENT = (CASHIER [ALPHA_CASHIER || ALPHA_BOOK] BOOK) [union(ALPHA_CASHIER, ALPHA_BOOK) || union(ALPHA_CHIT, ALPHA_RECEIPT)] (CHIT [ALPHA_CHIT || ALPHA_RECEIPT] RECEIPT)

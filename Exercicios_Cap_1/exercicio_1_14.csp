@@ -2,9 +2,9 @@
 
 channel east, west, north, south
 
-channel position, in, out:(Int,Int)
+channel position, in, out:(Int,Int) -- tentativa para ver se roda
 
-MAZE3 = in?walk(x,y) -> in!walk(x,y) -> if (walk(x,y) == {4,4})
+MAZE3 = in?walk(x,y) -> in!walk(x,y) -> if (walk(x,y) == {4,4}) -- perguntar como faz para declarar uma matriz
                                         then out 
                                         else MAZE3
 
@@ -16,3 +16,7 @@ walk_act(i,j) = position.(i,j) -> walk_act(i,j)
             [] west -> walk_act(i,j-1)
             [] south -> walk_act(i-1,j)
 
+-- a ideia foi tratar o labirinto como uma matriz 4x4, cada direção escolhida adiciona ou subtrai um dos índices da matriz
+-- e armazena na saida da função "walk_act", de certa forma iria simular o ato de andar pelo labirinto.
+-- faltou implementar uma forma de testar se bateu nas paredes externas ou internas
+-- não entendi como a mudança sugerida no item 2 vai mudar o comportamento do programa

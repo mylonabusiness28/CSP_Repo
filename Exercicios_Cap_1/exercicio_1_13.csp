@@ -1,0 +1,6 @@
+channel choose, cheese_cake, apple_pie, choc_cake : {0..5}
+
+
+SWEET_TROLLEY = choose?x -> cheese_cake!x -> SWEET_TROLLEY
+                         [] apple_pie!x -> SWEET_TROLLEY
+                         [] cheese_cake!x -> SWEET_TROLLEY
