@@ -1,0 +1,7 @@
+datatype numero = Int
+datatype tipo = T | Y
+channel in, send, received : numero.tipo
+
+SEC = in?x -> (send.1!x -> received.1 -> STOP
+               [] send.2!x -> received.2 -> STOP)
+

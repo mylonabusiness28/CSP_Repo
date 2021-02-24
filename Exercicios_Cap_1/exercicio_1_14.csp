@@ -5,7 +5,7 @@ channel east, west, north, south
 channel position, in, out:(Int,Int) -- tentativa para ver se roda
 
 MAZE3 = in?walk(x,y) -> in!walk(x,y) -> if (walk(x,y) == {4,4}) -- perguntar como faz para declarar uma matriz
-                                        then out 
+                                        then out -> MAZE3 
                                         else MAZE3
 
 walk(x,y) = walk_act(0,0)

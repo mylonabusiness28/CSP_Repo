@@ -4,40 +4,60 @@ datatype act = drop.tools | get.tools | paint
 channel isabella, kate : act
 
 
-ISABELLA = isabella.get.box -> isabella.get.easel -> isabella.paint -> -- Isabela e Kate executam os mesmos eventos sobre os mesmos objetos
-           isabella.drop.box -> isabella.drop.easel -> ISABELLA 
-         []
-           isabella.get.easel -> isabella.get.box -> isabella.paint ->
-           isabella.drop.easel -> isabella.drop.box -> ISABELLA
+ISABELLA = 
+  isabella.get.box -> isabella.get.easel -> isabella.paint -> -- Isabela e Kate executam os mesmos eventos sobre os mesmos objetos
+    isabella.drop.box -> isabella.drop.easel -> ISABELLA 
+  []
+  isabella.get.easel -> isabella.get.box -> isabella.paint ->
+    isabella.drop.easel -> isabella.drop.box -> ISABELLA
 
-KATE =     kate.get.box -> kate.get.easel -> kate.paint ->
-           kate.drop.box -> kate.drop.easel -> KATE 
-         []
-           kate.get.easel -> kate.get.box -> kate.paint ->
-           kate.drop.easel -> kate.drop.box -> KATE
+KATE = 
+  kate.get.box -> kate.get.easel -> kate.paint ->
+    kate.drop.box -> kate.drop.easel -> KATE 
+  []
+  kate.get.easel -> kate.get.box -> kate.paint ->
+    kate.drop.easel -> kate.drop.box -> KATE
 
-EASEL = isabella.get.easel -> isabella.drop.easel -> EASEL [] kate.get.easel -> kate.drop.easel -> EASEL
+PEOPLE = ISABELLA ||| KATE
 
-BOX = isabella.get.box -> isabella.drop.box -> BOX [] kate.get.box -> kate.drop.box -> BOX
+ALPHA_PEOPLE = {| isabella, kate |}
+
+EASEL = 
+  isabella.get.easel -> isabella.drop.easel -> EASEL 
+  [] 
+  kate.get.easel -> kate.drop.easel -> EASEL
+
+BOX = 
+  isabella.get.box -> isabella.drop.box -> BOX 
+  [] 
+  kate.get.box -> kate.drop.box -> BOX
+
+TOOLS = EASEL ||| BOX
+
+ALPHA_TOOLS = {isabella.get.easel, isabella.drop.easel, kate.get.easel, kate.drop.easel,
+              isabella.get.box, isabella.drop.box, kate.get.box, kate.drop.box}
 
 --EASEL = {|get, drop, paint|}      -- não sei se essa é a forma certa de declarar a sincronia dos eventos
 --BOX = {|get, drop, paint|}
 --ISABELLA_ACT = {|get, drop, paint|}
 --KATE_ACT = {|get, drop, paint|}
 
-ALPHA_EASEL = {isabella.get.easel, isabella.drop.easel, kate.get.easel, kate.drop.easel}
-ALPHA_BOX = {isabella.get.box, isabella.drop.box, kate.get.box, kate.drop.box}
-
-ALPHA_ISABELLA = {|isabella|} -- essa notação realiza todos os eventos a partir do canal isabella
-ALPHA_KATE = {|kate|}
-
-ALPHA_EASEL_BOX = union(ALPHA_EASEL,ALPHA_BOX) -- aqui usei a função de unir os conjuntos de eventos descritos acima
-ALPHA_ISABELLA_KATE = union(ALPHA_ISABELLA,ALPHA_KATE)
-
-EASEL_BOX = EASEL[ALPHA_EASEL ||| ALPHA_BOX]BOX
-
-ISABELLA_KATE = ISABELLA[{|isabella|} || {|kate|}]KATE
-     
-PAINTING =  ISABELLA_KATE[ALPHA_ISABELLA_KATE || ALPHA_EASEL_BOX]EASEL_BOX
+PAINTING =  PEOPLE [ALPHA_PEOPLE || ALPHA_TOOLS] TOOLS
 -- acho que era para sicronizar os 4, mas não achei uma outra forma de fazer funcionar
--- 
+
+assert PAINTING:[deadlock free]
+
+PARENTS = 
+  isabella.get.easel -> isabella.get.box -> PARENTS
+  []
+  isabella.get.box -> isabella.get.easel -> PARENTS
+  []
+  kate.get.easel -> kate.get.box -> PARENTS
+  []
+  kate.get.box -> kate.get.easel -> PARENTS  
+
+ALPHA_PARENTS = {| isabella.get, kate.get |}
+
+PAINTING2 =  PAINTING [ALPHA_PEOPLE ||ALPHA_PARENTS] PARENTS
+
+assert PAINTING2:[deadlock free]

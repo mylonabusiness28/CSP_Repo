@@ -1,6 +1,11 @@
-channel choose, cheese_cake, apple_pie, choc_cake : {0..5}
+channel cheese_cake, apple_pie, choc_cake
 
+SWEET_TROLLEY = SWEET_TROLLEY_AUX(2,1,1) 
 
-SWEET_TROLLEY = choose?x -> cheese_cake!x -> SWEET_TROLLEY
-                         [] apple_pie!x -> SWEET_TROLLEY
-                         [] cheese_cake!x -> SWEET_TROLLEY
+SWEET_TROLLEY_AUX(cheese, apple, choc) = 
+    (cheese > 0) & cheese_cake -> SWEET_TROLLEY_AUX(cheese - 1, apple, choc)
+    []
+    (apple > 0) & apple_pie -> SWEET_TROLLEY_AUX(cheese, apple - 1, choc)
+    []
+    (choc > 0) & choc_cake -> SWEET_TROLLEY_AUX(cheese, apple, choc - 1)
+

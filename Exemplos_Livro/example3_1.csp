@@ -1,0 +1,12 @@
+datatype tipo = T | B 
+channel listen, relay, log : tipo
+
+SPY = listen?x -> relay!x -> SPY
+
+MASTER = relay?y -> log!y -> MASTER
+
+ALPHA_SPY = {|listen,relay|}
+ALPHA_MASTER = {|relay,log|}
+
+
+COMM = SPY [ALPHA_SPY || ALPHA_MASTER] MASTER\{relay.T}

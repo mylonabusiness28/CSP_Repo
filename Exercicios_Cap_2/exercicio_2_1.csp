@@ -1,9 +1,12 @@
 channel cash, ticket, change
 
+channel c:{0..1}
 
 TICKET = cash -> ticket -> TICKET
 CHANGE = cash -> change -> CHANGE
 
 
-MACHINE = TICKET [{cash, ticket} || {cash,change}] CHANGE -- também funciona escrevendo direto nos colchetes
+MACHINE = TICKET [ { cash, ticket } || { cash,change } ] CHANGE -- também funciona escrevendo direto nos colchetes
                                                           -- 
+
+P = c.0 -> SKIP [ {| c |} || {| c |} ] c.0 -> SKIP 

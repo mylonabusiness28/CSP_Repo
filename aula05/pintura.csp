@@ -1,0 +1,49 @@
+datatype ACAO = pegar | devolver | pintar
+datatype RECURSO = caixa | suporte | nulo
+
+channel joao, jose: ACAO.RECURSO
+
+-- as ações joao.pintar e jose.pintar usam o recurso nulo.
+
+JOAO = joao.pegar.suporte -> joao.pegar.caixa -> joao.pintar.nulo ->
+              joao.devolver.suporte -> joao.devolver.caixa -> JOAO
+       [] joao.pegar.caixa -> joao.pegar.suporte -> joao.pintar.nulo ->
+              joao.devolver.caixa -> joao.devolver.suporte -> JOAO
+
+JOSE = jose.pegar.suporte -> jose.pegar.caixa -> jose.pintar.nulo ->
+              jose.devolver.suporte -> jose.devolver.caixa -> JOSE
+       [] jose.pegar.caixa -> jose.pegar.suporte -> jose.pintar.nulo ->
+              jose.devolver.caixa -> jose.devolver.suporte -> JOSE
+
+SUPORTE = joao.pegar.suporte -> joao.devolver.suporte -> SUPORTE
+        [] jose.pegar.suporte -> jose.devolver.suporte -> SUPORTE
+
+CAIXA = joao.pegar.caixa -> joao.devolver.caixa -> CAIXA
+        [] jose.pegar.caixa -> jose.devolver.caixa -> CAIXA
+
+-- alfabetos para a combinacao em paralelo:
+
+aK = {| joao |}
+aJ = {| jose |}
+aE = { joao.pegar.suporte, joao.devolver.suporte, jose.pegar.suporte, jose.devolver.suporte }
+aB = { joao.pegar.caixa, joao.devolver.caixa, jose.pegar.caixa, jose.devolver.caixa }
+
+aR = union(aB, aE)
+aS = union(aK, aJ)
+
+PINTURA = (JOAO[aK||aJ]JOSE) [aS||aR] (SUPORTE[aE||aB]CAIXA)
+
+assert PINTURA:[deadlock free]
+
+-----------------
+
+PAIS =   joao.pegar.suporte -> joao.pegar.caixa -> PAIS
+         [] joao.pegar.caixa -> joao.pegar.suporte -> PAIS
+         [] jose.pegar.suporte -> jose.pegar.caixa -> PAIS
+         [] jose.pegar.caixa -> jose.pegar.suporte -> PAIS
+
+aP = {| joao.pegar, jose.pegar |}
+
+FELICIDADE = PINTURA [aS||aP] PAIS
+
+assert FELICIDADE:[deadlock free]

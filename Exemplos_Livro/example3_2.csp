@@ -1,0 +1,14 @@
+datatype tipo = T | B
+channel in, mid, out : tipo
+channel ack
+
+
+S = in?x -> mid!x -> ack -> S
+
+R = mid?y -> out!y -> ack -> R
+
+ALPHA_S = {|in,mid,ack|}
+ALPHA_R = {|mid,out,ack|}
+
+
+COMM = S [ALPHA_S || ALPHA_R] R\{mid.T,ack}
