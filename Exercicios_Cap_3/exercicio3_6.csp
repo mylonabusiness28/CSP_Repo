@@ -1,0 +1,15 @@
+channel select, keep, return
+
+channel cash, receipt, cheque, card, swipe, sign, reject
+
+PURCHASE = CHOOSE; PAY
+
+CHOOSE = select -> (keep -> SKIP
+                    [] return -> CHOOSE)
+
+PAY = cash -> receipt -> SKIP
+       [] cheque -> receipt -> SKIP
+         [] card -> swipe -> (sign -> receipt -> SKIP
+                               [] reject -> PAY)
+
+SPENDING = PURCHASE; SPENDING

@@ -1,0 +1,3 @@
+--  A The process P \ A may make the same transitions as P, but all the events in A are
+-- renamed to the internal event |~| . Termination cannot be hidden, so the event X must
+-- not appear in the set A

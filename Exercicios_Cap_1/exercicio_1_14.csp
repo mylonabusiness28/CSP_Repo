@@ -1,22 +1,225 @@
 -- Exercicio 1.14 Labirinto
 
-channel east, west, north, south
+channel east, west, north, south, in, out
 
-channel position, in, out:(Int,Int) -- tentativa para ver se roda
+channel left, right, forward, back
 
-MAZE3 = in?walk(x,y) -> in!walk(x,y) -> if (walk(x,y) == {4,4}) -- perguntar como faz para declarar uma matriz
-                                        then out -> MAZE3 
-                                        else MAZE3
 
-walk(x,y) = walk_act(0,0)
+MAZE_begin = in -> MAZE(1, 1)
+MAZE(1, 1) = (east -> MAZE(1, 2))
+[]
+(south -> MAZE(2, 1))
+MAZE(1, 2) = (east -> MAZE(1, 3))
+[]
+(south -> MAZE(2, 2))
+[]
+(west -> MAZE(1, 1))
+MAZE(1, 3) = (east -> MAZE(1, 4))
+[]
+(west -> MAZE(1, 2))
+MAZE(1, 4) = (west -> MAZE(1, 3))
+[]
+(south -> MAZE(2, 4))
+MAZE(2, 1) = (north -> MAZE(1, 1))
+[]
+(south -> MAZE(3, 1))
+MAZE(2, 2) = (north -> MAZE(1, 2))
+[]
+(south -> MAZE(3, 2))
+MAZE(2, 3) = (south -> MAZE(3, 3))
+MAZE(2, 4) = (north -> MAZE(1, 4))
+[]
+(south -> MAZE(3, 4))
+MAZE(3, 1) = (north -> MAZE(2, 1))
+[]
+(south -> MAZE(4, 1))
+MAZE(3, 2) = (north -> MAZE(2, 2))
+MAZE(3, 3) = (north -> MAZE(2, 3))
+[]
+(south -> MAZE(4, 3))
+[]
+(east -> MAZE(3, 4))
+MAZE(3, 4) = (north -> MAZE(2, 4))
+[]
+(south -> MAZE(4, 4))
+[]
+(west -> MAZE(3, 3))
+MAZE(4, 1) = (east -> MAZE(4, 2))
+[]
+(north -> MAZE(3, 1))
+MAZE(4, 2) = (east -> MAZE(4, 3))
+[]
+(west -> MAZE(4, 1))
+MAZE(4, 3) = (north -> MAZE(3, 3))
+[]
+(west -> MAZE(4, 2))
+MAZE(4, 4) = (north -> MAZE(3, 4))
+[]
+(out -> MAZE_begin)
 
-walk_act(i,j) = position.(i,j) -> walk_act(i,j)
-            [] east -> walk_act(i,j+1)
-            [] north -> walk_act(i+1,j)
-            [] west -> walk_act(i,j-1)
-            [] south -> walk_act(i-1,j)
+assert MAZE_begin :[deadlock free]
 
--- a ideia foi tratar o labirinto como uma matriz 4x4, cada direção escolhida adiciona ou subtrai um dos índices da matriz
--- e armazena na saida da função "walk_act", de certa forma iria simular o ato de andar pelo labirinto.
--- faltou implementar uma forma de testar se bateu nas paredes externas ou internas
--- não entendi como a mudança sugerida no item 2 vai mudar o comportamento do programa
+
+
+
+MAZE_begin_2 = in -> MAZE2(1, 1, east)
+MAZE2(1, 1, east) = (forward -> MAZE2(1, 2, east))
+[]
+(right -> MAZE2(2, 1, south))
+MAZE2(1, 1, west) = (back -> MAZE2(1, 2, west))
+[]
+(left -> MAZE2(2, 1, south))
+MAZE2(1, 1, north) = (right -> MAZE2(1, 2, west))
+[]
+(back -> MAZE2(2, 1, south))
+
+
+MAZE2(1, 2, east) = (forward -> MAZE2(1, 3, east))
+[]
+(right -> MAZE2(2, 2, south))
+[]
+(back -> MAZE2(1, 1, west))
+
+MAZE2(1, 2, west) = (back -> MAZE2(1, 3, east))
+[]
+(left -> MAZE2(2, 2, south))
+[]
+(forward -> MAZE2(1, 1, west))
+MAZE2(1, 2, north) = (right -> MAZE2(1, 3, east))
+[]
+(back -> MAZE2(2, 2, south))
+[]
+(left -> MAZE2(1, 1, west))
+
+
+MAZE2(1, 3, east) = (forward -> MAZE2(1, 4, east))
+[]
+(back -> MAZE2(1, 2, west))
+
+MAZE2(1, 3, west) = (back -> MAZE2(1, 4, east))
+[]
+(forward -> MAZE2(1, 2, west))
+
+
+
+
+MAZE2(1, 4, east) = (back -> MAZE2(1, 3, west))
+[]
+(right -> MAZE2(2, 4, south))
+
+MAZE2(1, 4, north) = (left -> MAZE2(1, 3, west))
+[]
+(back -> MAZE2(2, 4, south))
+
+
+
+MAZE2(2, 1, south) = (back -> MAZE2(1, 1, north))
+[]
+(forward -> MAZE2(3, 1, south))
+MAZE2(2, 1, north) = (forward -> MAZE2(1, 1, north))
+[]
+(back -> MAZE2(3, 1, south))
+
+
+
+MAZE2(2, 2, south) = (back -> MAZE2(1, 2, north))
+[]
+(forward -> MAZE2(3, 2, south))
+MAZE2(2, 2, north) = (forward -> MAZE2(1, 2, north))
+[]
+(back -> MAZE2(3, 2, south))
+
+
+MAZE2(2, 3, north) = (back -> MAZE2(3, 3, south))
+
+
+
+MAZE2(2, 4, south) = (back -> MAZE2(1, 4, north))
+[]
+(forward -> MAZE2(3, 4, south))
+MAZE2(2, 4, north) = (forward -> MAZE2(1, 4, north))
+[]
+(back -> MAZE2(3, 4, south))
+
+
+
+MAZE2(3, 1, south) = (back -> MAZE2(2, 1, north))
+[]
+(forward -> MAZE2(4, 1, south))
+MAZE2(3, 1, north) = (forward -> MAZE2(2, 1, north))
+[]
+(back -> MAZE2(4, 1, south))
+
+
+MAZE2(3, 2, south) = (back -> MAZE2(2, 2, north))
+
+
+
+MAZE2(3, 3, south) = (back -> MAZE2(2, 3, north))
+[]
+(forward -> MAZE2(4, 3, south))
+[]
+(left -> MAZE2(3, 4, east))
+MAZE2(3, 3, west) = (right -> MAZE2(2, 3, north))
+[]
+(left -> MAZE2(4, 3, south))
+[]
+(back -> MAZE2(3, 4, east))
+MAZE2(3, 3, north) = (forward -> MAZE2(2, 3, north))
+[]
+(back -> MAZE2(4, 3, south))
+[]
+(right -> MAZE2(3, 4, east))
+
+
+
+MAZE2(3, 4, south) = (back -> MAZE2(2, 4, north))
+[]
+(right -> MAZE2(4, 4, south))
+[]
+(forward -> MAZE2(3, 3, west))
+MAZE2(3, 4, east) = (left -> MAZE2(2, 4, north))
+[]
+(right -> MAZE2(4, 4, south))
+[]
+(back -> MAZE2(3, 3, west))
+MAZE2(3, 4, north) = (forward -> MAZE2(2, 4, north))
+[]
+(back -> MAZE2(4, 4, south))
+[]
+(left -> MAZE2(3, 3, west))
+
+
+
+
+
+MAZE2(4, 1, south) = (left -> MAZE2(4, 2, east))
+[]
+(back -> MAZE2(3, 1, north))
+MAZE2(4, 1, west) = (back -> MAZE2(4, 2, east))
+[]
+(right -> MAZE2(3, 1, north))
+
+
+MAZE2(4, 2, east) = (forward -> MAZE2(4, 3, east))
+[]
+(back -> MAZE2(4, 1, west))
+MAZE2(4, 2, west) = (back -> MAZE2(4, 3, east))
+[]
+(forward -> MAZE2(4, 1, west))
+
+
+
+MAZE2(4, 3, east) = (left -> MAZE2(3, 3, north))
+[]
+(back -> MAZE2(4, 2, west))
+MAZE2(4, 3, south) = (back -> MAZE2(3, 3, north))
+[]
+(right -> MAZE2(4, 2, west))
+
+
+MAZE2(4, 4, south) = (back -> MAZE2(3, 4, north))
+[]
+(out -> MAZE_begin_2)
+
+assert MAZE_begin_2 :[deadlock free]
