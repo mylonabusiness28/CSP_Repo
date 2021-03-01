@@ -1,9 +1,8 @@
-datatype interrups = boss | ring
-channel x : interrups
+channel boss, ring
 
 channel tea, photocopying, filing, message, remove_coat, hang_coat
 
-JUNIOR = TASKS /\ P(x) -- não funciona pesquisar a sitaxe correta
+JUNIOR = TASKS /\ ([] x:{ring,boss} @ x -> P(x))
 
 TASKS = tea -> TASKS
         [] photocopying -> TASKS

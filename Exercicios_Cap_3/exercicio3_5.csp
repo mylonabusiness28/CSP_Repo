@@ -11,7 +11,9 @@ SET(S) = add?x -> SET(union(S, {x})) -- declaração de união entre conjuntos
          then answer!yes -> SET(S)
          else answer!no -> SET(S))
 
-STACK = push?x -> (NODE(x) || STACK(i)) \ (i.push,i.pop) 
+ALPHA=
+
+STACK = push?x -> (NODE(x) {|add,query,push,pop|} STACK(i)) \ (i.push,i.pop) 
                     [] pop!empty -> STACK
 
 STACK(i) = push?x -> NODE(x)
