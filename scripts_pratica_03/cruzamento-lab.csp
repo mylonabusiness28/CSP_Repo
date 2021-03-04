@@ -1,0 +1,106 @@
+-- A finalidade destes tipos de dados e declarações de canais é
+-- definir os eventos carrp.entrar, barreira.levantar, etc.
+
+datatype CB = subir | baixar | baixo
+datatype ELA = entrar | sair | aproximar
+
+channel carro:ELA
+channel trem:ELA
+channel barreira:CB
+
+CARROS = carro.aproximar -> carro.entrar -> carro.sair -> CARROS
+
+-- agora temos um sistema com dois trens
+
+TRENS2 = trem.aproximar -> TRENS2_A
+
+TRENS2_A = trem.aproximar -> TRENS2_AA
+           [] trem.entrar -> TRENS2_E
+
+TRENS2_AA = trem.entrar -> TRENS2_AE
+
+TRENS2_E = trem.aproximar -> TRENS2_AE
+            [] trem.sair -> TRENS2
+
+TRENS2_AE = trem.entrar -> TRENS2_EE
+             [] trem.sair -> TRENS2_A
+
+TRENS2_EE = trem.sair -> TRENS2_E
+
+
+-- A barreira é baixada e levantada
+
+BARREIRA2 = barreira.baixar -> barreira.baixo -> barreira.subir -> BARREIRA2
+
+-- A barreira impede os carros de entrarem quando a barreira tiver em baixo.
+-- Este comportamento é capturado pelo processo ESTRADA que restringe o evento
+-- carro.entrar
+
+ESTRADA2 = barreira.baixar -> barreira.baixo -> barreira.subir -> ESTRADA2
+       [] carro.entrar -> (carro.sair -> ESTRADA2
+                            [] barreira.baixar -> carro.sair ->
+                            barreira.baixo ->
+                                 barreira.subir -> ESTRADA2)
+
+ET   = {| trem |}
+EC   = {| carro |}
+EB   = {| barreira |}
+ER   = {| barreira, carro.entrar, carro.sair |}
+EBC  = {| barreira, carro |}
+ES   = {| trem, carro, barreira |}
+ETC  = {| trem, carro |}
+ECON = {| barreira, trem |}
+
+-- O sistema de cruzamento é a composição em paralelo destes componentes.
+
+CRUZAMENTO = ((BARREIRA2 [EB||EC] CARROS) [EBC||ET] TRENS2) [ES||ER]
+ESTRADA2
+
+-- A especificação é que não deveria existir um carro e um trem no cruzamento 
+-- ao mesmo tempo. Como podem existir até dois trens, carro.entrar deveria 
+-- apenas ser 
+-- possível se o número de eventos trem.sair for igual ao número 
+-- de eventos trem.entrar 
+
+SEM_ACIDENTE = carro.entrar -> carro.sair -> SEM_ACIDENTE
+        [] trem.entrar -> SEM_ACIDENTE1
+
+SEM_ACIDENTE1 = trem.sair -> SEM_ACIDENTE
+                [] trem.entrar -> trem.sair -> SEM_ACIDENTE1
+
+SA = {|carro.entrar, carro.sair, trem.entrar, trem.sair|}
+
+RSA = {|carro.aproximar, trem.aproximar, barreira|}
+
+SEM_ACIDENTE_SPEC = SEM_ACIDENTE [ SA || RSA ] RUN(RSA)
+
+RUN(A) = [] x:A @ x -> RUN(A)
+
+assert SEM_ACIDENTE_SPEC [T= CRUZAMENTO
+
+--------------------
+
+-- Observe que o controlador foi adaptado para lidar com dois trens agora:
+-- assim como antes, ele baixa a barreira se um trem se aproxima, e a
+--levanta
+--depois do trem
+-- sair, mas ele permite que eventos adicionais de trens aconteçam
+
+CONTROLE = CONTROLE_CIMA
+
+CONTROLE_CIMA =  trem.aproximar -> barreira.baixar -> barreira.baixo ->
+CONTROLE_BAIXO
+             [] trem.entrar -> CONTROLE_CIMA
+             [] trem.sair -> CONTROLE_CIMA
+
+CONTROLE_BAIXO = trem.aproximar -> CONTROLE_BAIXO
+              [] trem.entrar -> CONTROLE_BAIXO
+              [] trem.sair -> barreira.subir -> CONTROLE_CIMA
+
+SISTEMA = CRUZAMENTO [ES||ECON] CONTROLE
+
+-- Usando o controlador deveria fazer o sistema seguro
+-- Isto pode ser checado da seguinte maneira
+
+assert SEM_ACIDENTE_SPEC [T= SISTEMA
+

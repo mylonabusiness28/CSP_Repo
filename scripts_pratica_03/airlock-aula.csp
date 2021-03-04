@@ -1,0 +1,70 @@
+-- Tipos de dados
+
+datatype LOCAL = interna | externa
+
+datatype ACAO = abrir | fechar
+
+channel porta, valvula : LOCAL.ACAO
+
+-- Portas e válvulas
+
+PORTAINTERNA =  porta.interna.abrir -> porta.interna.fechar -> PORTAINTERNA 
+
+VALVULAINTERNA = valvula.interna.abrir -> valvula.interna.fechar -> VALVULAINTERNA 
+
+PORTAEXTERNA =  porta.externa.abrir -> porta.externa.fechar -> PORTAEXTERNA 
+
+VALVULAEXTERNA =  valvula.externa.abrir -> valvula.externa.fechar -> VALVULAEXTERNA 
+
+PORTAS = PORTAINTERNA [{|porta.interna|}||{|porta.externa|}] PORTAEXTERNA  
+
+VALVULAS = VALVULAINTERNA [{|valvula.interna|}||{|valvula.externa|}] VALVULAEXTERNA 
+
+COMPONENTES = PORTAS [ {|porta|} || {|valvula|} ] VALVULAS 
+
+-- Especificação de segurança
+
+-- SPEC_SEGURA = ???
+
+-- Controle que garante que as portas só abrem após as válvulas
+-- estiverem abertas
+
+CONTROLE_P_INT = valvula.interna.abrir -> CONTROLE_P_INT_A
+               [] valvula.interna.fechar -> CONTROLE_P_INT   
+CONTROLE_P_INT_A = valvula.interna.fechar -> CONTROLE_P_INT 
+               [] porta.interna.abrir -> CONTROLE_P_INT_A 
+
+CONTROLE_P_OUT = valvula.externa.abrir -> CONTROLE_P_OUT_A 
+               [] valvula.externa.fechar -> CONTROLE_P_OUT
+CONTROLE_P_OUT_A = valvula.externa.fechar -> CONTROLE_P_OUT 
+               [] porta.externa.abrir -> CONTROLE_P_OUT_A 
+
+CONTROLE_P = 
+   CONTROLE_P_INT
+      [{|valvula.interna, porta.interna.abrir|}||{|valvula.externa, porta.externa.abrir|}]
+   CONTROLE_P_OUT
+
+SISTEMA = 
+  COMPONENTES 
+    [{| porta, valvula |}
+      ||
+     {| valvula.interna, porta.interna.abrir, valvula.externa, porta.externa.abrir|}]
+  CONTROLE_P  
+
+-- Controle que garante que apenas uma válvula e uma porta está aberta por vez
+
+CONTROLE_VALVULA = valvula.interna.abrir -> valvula.interna.fechar -> CONTROLE_VALVULA 
+                [] valvula.externa.abrir -> valvula.externa.fechar -> CONTROLE_VALVULA 
+
+CONTROLE_PORTA = porta.interna.abrir -> porta.interna.fechar -> CONTROLE_PORTA 
+          [] porta.externa.abrir -> porta.externa.fechar -> CONTROLE_PORTA 
+
+CONTROLE = CONTROLE_VALVULA 
+             [{|valvula.interna, valvula.externa|}||{|porta.interna, porta.externa|}]
+          CONTROLE_PORTA
+
+-- Sistema Airlock
+
+AIRLOCK = SISTEMA [| {| porta, valvula |} |] CONTROLE
+
+

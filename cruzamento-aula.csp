@@ -1,0 +1,106 @@
+-- A finalidade destes tipos de dados e declarações de canais é
+-- definir os eventos carrp.entrar, barreira.levantar, etc.
+
+datatype CB = subir | baixar | baixo
+datatype ELA = entrar | sair | aproximar
+
+channel carro:ELA
+channel trem:ELA
+channel barreira:CB
+
+CARROS = carro.aproximar -> carro.entrar -> carro.sair -> CARROS
+
+TRENS = trem.aproximar -> trem.entrar -> trem.sair -> TRENS
+
+BARREIRA = barreira.baixar -> barreira.subir -> BARREIRA
+
+-- A barreira impede os carros de entrarem quando a barreira tiver em baixo.
+-- Este comportamento é capturado pelo processo ESTRADA que restringe o evento
+-- carro.entrar
+
+ESTRADA = barreira.baixar -> barreira.subir -> ESTRADA
+       [] carro.entrar -> ESTRADA
+
+ET   = {| trem |}
+EC   = {| carro |}
+EB   = {| barreira |}
+EE   = {| barreira, carro.entrar |}
+EBC  = {| barreira, carro |}
+ETCB   = {| trem, carro, barreira |}
+ECON = {| barreira, trem |}
+
+-- O sistema de cruzamento é a composição em paralelo destes componentes.
+
+CRUZAMENTO = ((BARREIRA [EB||EC] CARROS) [EBC||ET] TRENS) [ETCB||EE] ESTRADA
+
+-- A especificação é que o carro e o trem não deveriam estar no cruzamento
+-- ao mesmo tempo
+
+SEM_ACIDENTE = 
+        carro.entrar -> carro.sair -> SEM_ACIDENTE
+        [] trem.entrar -> trem.sair -> SEM_ACIDENTE
+
+assert SEM_ACIDENTE [T= CRUZAMENTO
+
+-- oops!  Need to allow the other events!
+
+-- Define RUN(A)
+
+RUN(A) = [] x:A @ x -> RUN(A)
+
+SA = {| carro.entrar, carro.sair, trem.entrar, trem.sair |}
+
+RSA = {| carro.aproximar, trem.aproximar, barreira |}
+
+SEM_ACIDENTE_SPEC = SEM_ACIDENTE [ SA || RSA ] RUN(RSA)
+
+-- The specification allows all the other events, disallowing only a
+-- car and a train on the crossing at the same time
+
+assert SEM_ACIDENTE_SPEC [T= CRUZAMENTO
+
+-- Introduzindo o controlador para baixar a barreira quando um trem
+-- se aproximar. A barreira é baixada antes do trem entrar no
+-- cruzamento
+
+CONTROLE =  trem.aproximar -> barreira.baixar -> trem.entrar -> 
+           trem.sair -> barreira.subir -> CONTROLE
+
+-- Usando o controlador deveria fazer o sistema seguro
+-- Isto pode ser checado da seguinte maneira
+
+SISTEMA_SEGURO = CRUZAMENTO [ ETCB || ECON ] CONTROLE
+
+assert SEM_ACIDENTE_SPEC [T= SISTEMA_SEGURO
+
+------------------------------------------
+
+-- Nós também precisamos saber quando a barreira é baixada e levantada
+
+BARREIRA2 = barreira.baixar -> barreira.baixo -> barreira.subir -> BARREIRA2
+
+-- Se um carro está no cruzamento quando a bairreira for baixada, então
+-- então ele deveria estar fora do cruzamento antes da barreia estar em baixo.
+
+ESTRADA2 = barreira.baixar -> barreira.baixo -> barreira.subir -> ESTRADA2
+       [] carro.entrar -> (carro.sair -> ESTRADA2
+                        [] barreira.baixar -> carro.sair -> barreira.baixo ->
+                                 barreira.subir -> ESTRADA2)
+
+-- Isto expande o alfabeto do componente ESTRADA:
+
+EE2 = {| barreira, carro.entrar, carro.sair |}
+
+CRUZAMENTO2 = ((BARREIRA2 [EB||EC] CARROS) [EBC||ET] TRENS) [ETCB||EE2] ESTRADA2
+
+-- O controlador precisa incluir a informação de que a barreira está em baixo
+-- antes do trem entrar no cruzamento
+
+CONTROLE2 =  trem.aproximar -> barreira.baixar -> barreira.baixo -> trem.entrar -> 
+               trem.sair -> barreira.subir -> CONTROLE2
+
+SISTEMA = CRUZAMENTO2 [ETCB||ECON] CONTROLE2
+
+assert SEM_ACIDENTE_SPEC [T= SISTEMA
+
+
