@@ -1,0 +1,10 @@
+datatype tipos = i | h | g | f | e | d
+channel signal : tipos
+
+EMPTY = signal.e -> FIRST
+FIRST = signal.f -> SECOND
+SECOND = signal.g -> EMPTY
+
+CON = EMPTY [] FIRST [] SECOND
+
+TRACK(i) = 

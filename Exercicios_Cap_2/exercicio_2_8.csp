@@ -11,7 +11,9 @@ C1 (i, j) = if i<j
           then h.i.j?x -> v.i.j?y -> v.i.(j+1)!(MIN(x, y)) -> h.(i+1).j!(MAX(x, y)) -> C1(i,j)
           else h.i.i?x -> v.i.i?y -> v.i.(i+1)!(MIN(x, y)) -> v.(i+1).(i+1)!(MAX(x, y)) -> C1(i,i)
 
-SORTER1 =  || i: {0..(N-1)}, j: {i..(N-1)} @ [{|v.i.j,h.i.j,v.i.(j+1),h.(i+1).j,v.i.(i+1),v.(i+1).(i+1)|}] C1(i, j)
+ALPHA_C1(i,j) = {|h.i.j,v.i.j,v.i.(j+1),h.(i+1).j, h.i.i, v.i.i, v.i.(i+1),v.(i+1).(i+1)|}
+
+SORTER1 =  || i: {0..(N-1)}, j: {i..(N-1)} @ [ALPHA_C1(i,j)] C1(i, j)
 
 -- 1.Is it deadlock-free? Não
 
@@ -21,7 +23,9 @@ C2 (i, j) = if i<j
           else  v.i.j?y -> h.i.j?x -> v.(i+1).(i+1)!(MAX(x, y)) -> v.i.(i+1)!(MIN(x, y)) -> C2(i,j)
 
 
-SORTER2 =  || i: {0..(N-1)}, j: {i..N} @ [{|v.i.j,h.i.j,v.i.(j+1),h.(i+1).j,v.i.(i+1),v.(i+1).(i+1)|}] C2(i, j)
+--ALPHA_C2(i,j) = {|v.i.j,h.i.j,v.i.(j+1),h.(i+1).j,v.i.(i+1),v.(i+1).(i+1)|}
+
+SORTER2 =  || i: {0..(N-1)}, j: {i..(N-1)} @ [ALPHA_C1(i,j)] C2(i, j)
 
 -- 2. Is it deadlock-free if the order of each cell’s output is reversed (so output occurs on the h channel before the v channel) as follows:
 
@@ -30,8 +34,9 @@ C3 (i, j) = if i<j
           then v.i.j?y -> h.i.j?x -> h.(i+1).j!(MAX(x, y)) -> v.i.(j+1)!(MIN(x, y)) -> C3(i,j)
           else v.i.j?y -> h.i.j?x -> v.(i+1).(j+1)!(MAX(x, y)) -> v.i.j+1!(MIN(x, y)) -> C3(i,j)
 
+--ALPHA_C3(i,j) = {|v.i.j,h.i.j,v.i.(j+1),h.(i+1).j,v.i.(i+1),v.(i+1).(i+1)|}
 
-SORTER3 =  || i: {0..(N-1)}, j: {0..N} @ [{|v.i.j,h.i.j,v.i.(j+1),h.(i+1).j,v.i.(i+1),v.(i+1).(i+1)|}] C3(i, j)
+SORTER3 =  || i: {0..(N-1)}, j: {0..(N-1)} @ [ALPHA_C1(i,j)] C3(i, j)
 
 -- 3. Is it deadlock-free if the order of both inputs and outputs for a cell is reversed as follows:
 

@@ -1,25 +1,39 @@
-channel pickup, putdown, eat, enter, leave:{0..n}.{0..n} 
+channel pick,put:{0..n}.{0..n} 
+channel enter,eat,leave:{0..n}
 
 n =4
 
-inc(x) = (x + 1) % (4+1)
-dec(x) = (x - 1) % (4+1)
+PHIL(i) =  enter.i -> ((pick.i.i -> pick.i.((i+1)%n+1) -> eat.i 
+                        -> put.i.i -> put.i.((i+1)%n+1) -> leave.i -> PHIL(i))) -- descrição tal qual está no livro
+                        []
+                      ((pick.i.((i+1)%n+1) -> pick.i.i -> eat.i 
+                        -> put.i.((i+1)%n+1) -> put.i.i -> leave.i -> PHIL(i))) 
 
-PHIL(i) =  enter.i -> pickup.i.inc(i) -> eat.i.i ->
-           putdown.i.i -> putdown.i.inc(i) -> leave.i -> PHIL(i)
+ALPHA_PHIL(i) = {pick.i.i, pick.i.(i), put.i.i, put.i.(i), enter.i, eat.i, leave.i} -- alfabeto do filosofo
 
-CHOP(i) = pickup.i.i -> putdown.i.i -> CHOP(i)
-        [] pickup.dec(i).i -> putdown.dec(i).i -> CHOP(i)
+PHILOSOPHER = || i:{0..n} @ [ALPHA_PHIL(i)] PHIL(i)
 
-A_PHIL(i) = { pickup.i.i, pickup.i.inc(i),
-                         putdown.i.i, putdown.i.inc(i),
-                         enter.i, leave.i }
 
-PHILS = || i:{0..4} @ [A_PHIL(i)] PHIL(i)
+CHOP(i) = pick.i.i -> put.i.i -> CHOP(i)
+          [] pick.((i-1)%n+1).i -> put.((i-1)%n+1).i -> CHOP(i) -- descrição tal qual está no livro
 
-A_CHOPS(i) = { pickup.i.i, putdown.i.i,
-                         pickup.dec(i).i, putdown.dec(i).i }
+ALPHA_CHOP(i) = {pick.i.i, put.i.i, pick.(i).i, put.(i).i} -- alfabeto do palito
 
-CHOPS = || i:{0..4} @ [A_CHOPS(i)] CHOP(i)
+CHOPSTICK = || i:{0..n} @ [ALPHA_CHOP(i)] CHOP(i)
 
-COLLEGE = PHILS [ {| pickup,putdown,eat,enter,leave |} || {| pickup,putdown |} ] CHOPS
+COLLEGE = PHILOSOPHER [{|pick,put,enter,eat,leave|} || {|pick,put|}] CHOPSTICK
+
+assert COLLEGE:[deadlock free] --está dando deadlock porque quando entram 3 filosofos e eles pegam os palitos
+
+BUTLER(i) = if (i==0)
+            then [] x: {|enter|} @ x -> BUTLER(1)
+            else
+               if (i==n)                                -- fiz essa função seguindo a aula do SIGAA
+               then [] y: {|leave|} @ y -> BUTLER(i-1)
+               else (([] y : {|leave|} @ y -> BUTLER(i-1))
+                        [] ( [] x : {|enter|} @ x -> BUTLER(i+1)))
+
+NEWCOLLEGE = COLLEGE [{|pick,put,enter,eat,leave|} || {|enter,leave|}] BUTLER(0)
+
+assert NEWCOLLEGE:[deadlock free] -- mesma coisa não ta funcionando, continua com deadlock
+                                 -- e agora? 
