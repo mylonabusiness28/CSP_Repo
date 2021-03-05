@@ -24,7 +24,7 @@ CHOPSTICK = || i:{0..n} @ [ALPHA_CHOP(i)] CHOP(i)
 COLLEGE = PHILOSOPHER [{|pick,put,enter,eat,leave|} || {|pick,put|}] CHOPSTICK
 
 assert COLLEGE:[deadlock free] --está dando deadlock porque quando entram 3 filosofos e eles pegam os palitos
-
+                               --do lado direito e o ultimo fica aguardando o filosofo soltar o palito  
 BUTLER(i) = if (i==0)
             then [] x: {|enter|} @ x -> BUTLER(1)
             else
