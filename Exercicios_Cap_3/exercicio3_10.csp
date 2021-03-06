@@ -17,7 +17,7 @@ ALPHA_PHIL(i) = {pick.i.i, pick.i.inc(i), put.i.i, put.i.inc(i), enter.i, eat.i,
 PHILOSOPHER = || i:{0..n} @ [ALPHA_PHIL(i)] PHIL(i)
 
 CHOP(i) = pick.i.i -> put.i.i -> CHOP(i)
-          [] pick.dec(i).i -> put.dec(i).i -> CHOP(i) -
+          [] pick.dec(i).i -> put.dec(i).i -> CHOP(i) 
 
 ALPHA_CHOP(i) = {pick.i.i, put.i.i, pick.dec(i).i, put.dec(i).i} -- alfabeto do palito
 
