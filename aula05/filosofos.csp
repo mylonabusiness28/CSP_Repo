@@ -50,3 +50,5 @@ BUTLER(i) = if (i==0)
               then [] y : {|getup|} @ y -> BUTLER(i-1)
               else (([] y : {|getup|} @ y -> BUTLER(i-1))
                       [] ( [] x : {|sitdown|} @ x -> BUTLER(i+1)))
+
+assert NEWCOLLEGE:[deadlock free]                      

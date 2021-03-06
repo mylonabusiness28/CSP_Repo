@@ -1,25 +1,25 @@
 channel pick,put:{0..n}.{0..n} 
 channel enter,eat,leave:{0..n}
 
-n =4
+n = 2
 
-inc(x) = (x + 1) % (n+1) -- Como assim? 
-dec(x) = (x - 1) % (n+1)  -- sem essa função de calculo não funciona
+inc(x) = (x + 1) % (n+1) -- Porque só funcionou com o calculo aqui?
+dec(x) = (x - 1) % (n+1)  
 
 PHIL(i) =  enter.i -> ((pick.i.i -> pick.i.inc(i) -> eat.i 
                         -> put.i.i -> put.i.inc(i) -> leave.i -> PHIL(i))) 
-                     --   []
-                     -- ((pick.i.((i+1)%n+1) -> pick.i.i -> eat.i 
-                     --   -> put.i.((i+1)%n+1) -> put.i.i -> leave.i -> PHIL(i))) 
+                      []
+                     ((pick.i.inc(i) -> pick.i.i -> eat.i 
+                       -> put.i.inc(i) -> put.i.i -> leave.i -> PHIL(i))) 
 
-ALPHA_PHIL(i) = {pick.i.i, pick.i.inc(i), put.i.i, put.i.inc(i), enter.i, eat.i, leave.i} -- alfabeto do filosofo
+ALPHA_PHIL(i) = {pick.i.i, pick.i.inc(i), put.i.i, put.i.inc(i), enter.i, eat.i, leave.i}
 
 PHILOSOPHER = || i:{0..n} @ [ALPHA_PHIL(i)] PHIL(i)
 
 CHOP(i) = pick.i.i -> put.i.i -> CHOP(i)
           [] pick.dec(i).i -> put.dec(i).i -> CHOP(i) 
 
-ALPHA_CHOP(i) = {pick.i.i, put.i.i, pick.dec(i).i, put.dec(i).i} -- alfabeto do palito
+ALPHA_CHOP(i) = {pick.i.i, put.i.i, pick.dec(i).i, put.dec(i).i}
 
 CHOPSTICK = || i:{0..n} @ [ALPHA_CHOP(i)] CHOP(i)
 
@@ -30,7 +30,7 @@ assert COLLEGE:[deadlock free]
 BUTLER(i) = if (i==0)
             then [] x: {|enter|} @ x -> BUTLER(1)
             else
-               if (i==n)                                -- fiz essa função seguindo a aula do SIGAA
+               if (i==n)                               
                then [] y: {|leave|} @ y -> BUTLER(i-1)
                else (([] y : {|leave|} @ y -> BUTLER(i-1))
                         [] ( [] x : {|enter|} @ x -> BUTLER(i+1)))
