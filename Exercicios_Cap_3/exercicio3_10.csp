@@ -3,28 +3,30 @@ channel enter,eat,leave:{0..n}
 
 n =4
 
-PHIL(i) =  enter.i -> ((pick.i.i -> pick.i.((i+1)%n+1) -> eat.i 
-                        -> put.i.i -> put.i.((i+1)%n+1) -> leave.i -> PHIL(i))) -- descrição tal qual está no livro
-                        []
-                      ((pick.i.((i+1)%n+1) -> pick.i.i -> eat.i 
-                        -> put.i.((i+1)%n+1) -> put.i.i -> leave.i -> PHIL(i))) 
+inc(x) = (x + 1) % (n+1) -- Como assim? 
+dec(x) = (x - 1) % (n+1)  -- sem essa função de calculo não funciona
 
-ALPHA_PHIL(i) = {pick.i.i, pick.i.(i), put.i.i, put.i.(i), enter.i, eat.i, leave.i} -- alfabeto do filosofo
+PHIL(i) =  enter.i -> ((pick.i.i -> pick.i.inc(i) -> eat.i 
+                        -> put.i.i -> put.i.inc(i) -> leave.i -> PHIL(i))) 
+                     --   []
+                     -- ((pick.i.((i+1)%n+1) -> pick.i.i -> eat.i 
+                     --   -> put.i.((i+1)%n+1) -> put.i.i -> leave.i -> PHIL(i))) 
+
+ALPHA_PHIL(i) = {pick.i.i, pick.i.inc(i), put.i.i, put.i.inc(i), enter.i, eat.i, leave.i} -- alfabeto do filosofo
 
 PHILOSOPHER = || i:{0..n} @ [ALPHA_PHIL(i)] PHIL(i)
 
-
 CHOP(i) = pick.i.i -> put.i.i -> CHOP(i)
-          [] pick.((i-1)%n+1).i -> put.((i-1)%n+1).i -> CHOP(i) -- descrição tal qual está no livro
+          [] pick.dec(i).i -> put.dec(i).i -> CHOP(i) -
 
-ALPHA_CHOP(i) = {pick.i.i, put.i.i, pick.(i).i, put.(i).i} -- alfabeto do palito
+ALPHA_CHOP(i) = {pick.i.i, put.i.i, pick.dec(i).i, put.dec(i).i} -- alfabeto do palito
 
 CHOPSTICK = || i:{0..n} @ [ALPHA_CHOP(i)] CHOP(i)
 
 COLLEGE = PHILOSOPHER [{|pick,put,enter,eat,leave|} || {|pick,put|}] CHOPSTICK
 
-assert COLLEGE:[deadlock free] --está dando deadlock porque quando entram 3 filosofos e eles pegam os palitos
-                               --do lado direito e o ultimo fica aguardando o filosofo soltar o palito  
+assert COLLEGE:[deadlock free] 
+                                 
 BUTLER(i) = if (i==0)
             then [] x: {|enter|} @ x -> BUTLER(1)
             else
@@ -35,5 +37,4 @@ BUTLER(i) = if (i==0)
 
 NEWCOLLEGE = COLLEGE [{|pick,put,enter,eat,leave|} || {|enter,leave|}] BUTLER(0)
 
-assert NEWCOLLEGE:[deadlock free] -- mesma coisa não ta funcionando, continua com deadlock
-                                 -- e agora? 
+assert NEWCOLLEGE:[deadlock free]
