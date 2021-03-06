@@ -1,16 +1,16 @@
 channel pick,put:{0..n}.{0..n} 
 channel enter,eat,leave:{0..n}
 
-n =4
+n = 4
 
 inc(x) = (x + 1) % (n+1) -- Como assim? 
 dec(x) = (x - 1) % (n+1)  -- sem essa função de calculo não funciona
 
-PHIL(i) =  enter.i -> ((pick.i.i -> pick.i.inc(i) -> eat.i 
-                        -> put.i.i -> put.i.inc(i) -> leave.i -> PHIL(i))) 
-                     --   []
-                     -- ((pick.i.((i+1)%n+1) -> pick.i.i -> eat.i 
-                     --   -> put.i.((i+1)%n+1) -> put.i.i -> leave.i -> PHIL(i))) 
+PHIL(i) =  enter.i -> (pick.i.i -> pick.i.inc(i) -> eat.i 
+                        -> put.i.i -> put.i.inc(i) -> leave.i -> PHIL(i))
+                     --   []                                
+                     -- (pick.i.inc(i) -> pick.i.i -> eat.i     -- com essa escolha não funciona, dá deadlock mesmo com o butler!
+                     --   -> put.i.inc(i) -> put.i.i -> leave.i -> PHIL(i))
 
 ALPHA_PHIL(i) = {pick.i.i, pick.i.inc(i), put.i.i, put.i.inc(i), enter.i, eat.i, leave.i} -- alfabeto do filosofo
 
@@ -31,7 +31,7 @@ BUTLER(i) = if (i==0)
             then [] x: {|enter|} @ x -> BUTLER(1)
             else
                if (i==n)                                -- fiz essa função seguindo a aula do SIGAA
-               then [] y: {|leave|} @ y -> BUTLER(i-1)
+               then [] y: {|leave|} @ y -> BUTLER(i-1)  -- com ela não aparece mais deadlock
                else (([] y : {|leave|} @ y -> BUTLER(i-1))
                         [] ( [] x : {|enter|} @ x -> BUTLER(i+1)))
 
