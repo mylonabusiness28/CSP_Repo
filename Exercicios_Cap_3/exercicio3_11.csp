@@ -1,10 +1,14 @@
 datatype tipos = i | h | g | f | e | d
 channel signal : tipos
+channel train_move
+
+-- signal.i = 
 
 EMPTY = signal.e -> FIRST
 FIRST = signal.f -> SECOND
 SECOND = signal.g -> EMPTY
 
-CON = EMPTY [] FIRST [] SECOND
+CON = EMPTY
 
-TRACK(i) = 
+CON = (signal.f -> SECOND) [[signal <- ]]
+

@@ -1,0 +1,10 @@
+datatype X = A | B | C
+datatype Y = red | green
+
+channel signal: X.Y
+channel point: X 
+channel enter, leave: X.{0..n}
+
+SIGNALS = signal.X.Y -> 
+
+

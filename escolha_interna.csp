@@ -1,0 +1,13 @@
+channel choc,moeda,conf
+
+MACHINE1 = moeda -> (conf -> MACHINE1
+                    |~| choc -> MACHINE1)
+
+MACHINE2 =  MACH_choc |~| MACH_conf
+
+MACH_choc = moeda -> choc -> MACH_choc
+
+MACH_conf = moeda -> conf -> MACH_conf
+
+assert MACHINE1 :[deadlock free]
+assert MACHINE2 :[deadlock free]
