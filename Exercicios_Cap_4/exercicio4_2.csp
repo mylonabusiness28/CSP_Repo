@@ -1,0 +1,8 @@
+--Exercise 4.2 Give the traces of the following processes:
+
+1. <>, <a>, <b>, <b,c>
+2. <>, <a>, <b>, <b,c>, <b,d>
+3. <>, <a>, <a,b>
+4. 
+5. <>, <a>, <a,b>, 
+6. <>, <a>, <a,b>, <c>

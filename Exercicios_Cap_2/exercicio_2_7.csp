@@ -1,0 +1,18 @@
+-- Exercise 2.7 Consider the hypercube network of Example 2.13.
+
+--1. Not all of the channel names in Figure 2.6 have been given their subscripts. Give the subscripts for the remaining channels.
+
+channel in, out :{0..N}
+channel c :{0..N}.{0..N}
+
+ = 2
+
+NODE(l) = in.?l -> out.?l -> (c.?l.?d) 
+
+ALPHA_N = {}
+
+adj(l) = 
+
+next(l,d) = 
+
+MAILER = || l:{0..1} @ [ALPHA_N] l -> NODE(l)

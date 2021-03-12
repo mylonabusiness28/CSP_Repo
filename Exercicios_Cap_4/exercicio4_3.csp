@@ -1,0 +1,2 @@
+--Exercise 4.3 Why is the empty trace explicitly included in the definition of indexed external
+--choice? Why is it not also included in the definition of indexed internal choice?
