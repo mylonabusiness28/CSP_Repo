@@ -1,9 +1,16 @@
+--Exercise 3.2 Give a process which captures the generic behaviour of each cell
+--C(i,j) in the systolic array SORTER, given in Example 2.12. What are the appropriate event 
+--renaming functions for instantiating the generic process to each cell? Give an alternative 
+-- definition of SORTER as a parallel combination of these renamed components.
+
 channel v, h : {1..3}.{1..3}.{1..3}
+channel v', h' : {1..3}.{1..3}.{1..3}
+
 
 MIN(a, b) = if a<b then a else b
 MAX(a, b) = if a>=b then a else b
 
-C1 (i, j) = if i< j
+C1(i,j) = if i< j
          then h.i.j?x -> v.i.j?y -> v.i.(j+1)!(MIN(x, y)) -> h.(i+1).j!(MAX(x, y)) -> C1(i,j)
          else h.i.i?x -> v.i.i?y -> v.i.(i+1)!(MIN(x, y)) -> v.(i+1).(i+1)!(MAX(x, y)) -> C1(i,i)
 
@@ -11,25 +18,23 @@ ALPHA_C1(i,j) = if i<j
                 then {|h.i.j, v.i.j,v.i.(j+1),h.(i+1).j|}
                 else {|h.i.i, v.i.i, v.i.(i+1),v.(i+1).(i+1)|}
 
-SORTER1 =  || i : {1..2}, j : {1..i} @ [ALPHA_C1(i,j)] C1(i, j)
+SORTER =  || i: {1..2}, j: {1..i} @ [ALPHA_C1(i,j)] C1(i,j)
 
+SORTER' = || i: {1..2}, j: {1..i} @ [ALPHA_C1'(i,j)] C1'(i,j) -- esse é o processo que captura o comportamento 
+                                                                 -- genérico de cada célula do ordenador
 
-C2 (i, j) = if i< j
-           then h.i.j?x -> v.i.j?y -> h.(i+1).j!(MAX(x, y)) -> v.i.(j+1)!(MIN(x, y)) -> C2(i,j)
-          else v.i.j?y -> h.i.j?x -> v.(i+1).(i+1)!(MAX(x, y)) -> v.i.(i+1)!(MIN(x, y)) -> C2(i,j)
+C1'(i,j) = C1(i,j) [[v <- v', h <- h']] -- aqui eu acredito que fiz a renomeação dos canais v e h para
+                                      -- v' e h' respectivamente.
 
+ALPHA_C1'(i,j) = if i<j 
+                then {|h'.i.j,v'.i.j,v'.i.(j+1),h'.(i+1).j|}
+                else {|h'.i.i,v'.i.i,v'.i.(i+1),v'.(i+1).(i+1)|}
 
-SORTER2 =  || i : {1..2}, j : {1..i} @ [ALPHA_C1(i,j)] C2(i, j)
+RENAMING_SORT = SORTER [{|v,h|} || {|v',h'|}] SORTER' -- busquei colocar em paralelo os canais originais
+                                                      -- e os renomeados
 
-
-
-C3 (i, j) = if i< j
-          then v.i.j?y -> h.i.j?x -> h.(i+1).j!(MAX(x, y)) -> v.i.(j+1)!(MIN(x, y)) -> C3(i,j)
-          else v.i.j?y -> h.i.j?x -> v.i.(i+1)!(MIN(x, y)) -> v.(i+1).(i+1)!(MAX(x, y)) -> C3(i,j)
-
-
-SORTER3 =  || i : {1..2}, j : {1..i} @ [ALPHA_C1(i,j)] C3(i, j)
-
-assert SORTER1 :[deadlock free]
-assert SORTER2 :[deadlock free]
-assert SORTER3 :[deadlock free]
+assert SORTER :[deadlock free]
+assert SORTER':[deadlock free]
+assert SORTER [T= SORTER' -- modelo de traces
+assert SORTER [F= SORTER' -- modelo de falhas
+assert SORTER [FD= SORTER' -- modelo de falhas-divergencias
