@@ -4,30 +4,31 @@ MIN(a, b) = if a<b then a else b
 MAX(a, b) = if a>=b then a else b
 
 C1 (i, j) = if i< j
-          then h.i.j?x -> v.i.j?y -> v.i.j+1!(MIN(x, y)) -> h.i+1.j.(MAX(x, y)) -> C1(i,j)
-          else h.i.j?x -> v.i.j?y -> v.i.j+1!(MIN(x, y)) -> h.i+1.j+1.(MAX(x, y)) -> C1(i,j)
+         then h.i.j?x -> v.i.j?y -> v.i.(j+1)!(MIN(x, y)) -> h.(i+1).j!(MAX(x, y)) -> C1(i,j)
+         else h.i.i?x -> v.i.i?y -> v.i.(i+1)!(MIN(x, y)) -> v.(i+1).(i+1)!(MAX(x, y)) -> C1(i,i)
 
-SORTER1 =  || i : {1..2}, j : {1..i} @ [{|v.i.j, h.i.j|}] C1(i, j)
+ALPHA_C1(i,j) = if i<j 
+                then {|h.i.j, v.i.j,v.i.(j+1),h.(i+1).j|}
+                else {|h.i.i, v.i.i, v.i.(i+1),v.(i+1).(i+1)|}
 
-
+SORTER1 =  || i : {1..2}, j : {1..i} @ [ALPHA_C1(i,j)] C1(i, j)
 
 
 C2 (i, j) = if i< j
-          then h.i.j?x -> v.i.j?y -> h.i+1.j.(MAX(x, y)) -> v.i.j+1!(MIN(x, y)) -> C2(i,j)
-          else  h.i.j?x -> v.i.j?y -> h.i+1.j+1.(MAX(x, y)) -> v.i.j+1!(MIN(x, y)) -> C2(i,j)
+           then h.i.j?x -> v.i.j?y -> h.(i+1).j!(MAX(x, y)) -> v.i.(j+1)!(MIN(x, y)) -> C2(i,j)
+          else v.i.j?y -> h.i.j?x -> v.(i+1).(i+1)!(MAX(x, y)) -> v.i.(i+1)!(MIN(x, y)) -> C2(i,j)
 
 
-SORTER2 =  || i : {1..2}, j : {1..i} @ [{|v.i.j, h.i.j|}] C2(i, j)
-
+SORTER2 =  || i : {1..2}, j : {1..i} @ [ALPHA_C1(i,j)] C2(i, j)
 
 
 
 C3 (i, j) = if i< j
-          then v.i.j?y -> h.i.j?x -> h.i+1.j.(MAX(x, y)) -> v.i.j+1!(MIN(x, y)) -> C3(i,j)
-          else v.i.j?y -> h.i.j?x -> h.i+1.j+1.(MAX(x, y)) -> v.i.j+1!(MIN(x, y)) -> C3(i,j)
+          then v.i.j?y -> h.i.j?x -> h.(i+1).j!(MAX(x, y)) -> v.i.(j+1)!(MIN(x, y)) -> C3(i,j)
+          else v.i.j?y -> h.i.j?x -> v.i.(i+1)!(MIN(x, y)) -> v.(i+1).(i+1)!(MAX(x, y)) -> C3(i,j)
 
 
-SORTER3 =  || i : {1..2}, j : {1..i} @ [{|v.i.j, h.i.j, v.i.j+1, h.i+1.j, h.i+1.j+1|}] C3(i, j)
+SORTER3 =  || i : {1..2}, j : {1..i} @ [ALPHA_C1(i,j)] C3(i, j)
 
 assert SORTER1 :[deadlock free]
 assert SORTER2 :[deadlock free]
