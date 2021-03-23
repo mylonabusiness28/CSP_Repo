@@ -1,7 +1,7 @@
 channel pick,put:{0..n}.{0..n} 
 channel enter,eat,leave:{0..n}
 
-n = 4
+n = 2
 
 PHIL(i) =  enter.i -> ((pick.i.i -> pick.i.((i+1) % (n+1)) -> eat.i 
                         -> put.i.i -> put.i.((i+1) % (n+1)) -> leave.i -> PHIL(i))) 
