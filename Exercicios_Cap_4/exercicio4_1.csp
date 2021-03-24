@@ -1,0 +1,17 @@
+-- EXERCISE 4.1 What are the traces associated with the following finite state machines ?
+
+machine 01
+
+<>
+<a>
+<a,b>
+<τ>
+<τ,c>
+
+machine 02
+
+<>
+<a>
+<b>
+<a,c>
+<a,b>

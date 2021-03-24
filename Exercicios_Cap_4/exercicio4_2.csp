@@ -1,8 +1,21 @@
 --Exercise 4.2 Give the traces of the following processes:
 
 1. <>, <a>, <b>, <b,c>
+
 2. <>, <a>, <b>, <b,c>, <b,d>
+
 3. <>, <a>, <a,b>
-4. 
-5. <>, <a>, <a,b>, 
-6. <>, <a>, <a,b>, <c>
+
+4. traces(out!n -> out!(n*n) -> STOP) = {<>} 
+                                          U {<out.n> | n є Int} -- fiz seguindo a explicação Pág. 91 e 92
+                                          U {<out.n, out(n*n)> | n є Int}      
+
+5. traces(a -> b -> RUN{a,b}) = {<>}
+                                 U  {<a>} 
+                                 U  {<a,b>}
+                                 U  {tr | tr є TRACE ˄ σ (tr) contidos <a,b>} --não tenho certeza Pág. 92
+
+6. traces(a -> b -> STOP |~| RUN{a,c}) = {<tau>}
+                                            U {<a>}
+                                            U {<a,b>}
+                                            U {tr | tr є TRACE ˄ σ (tr) contidos <a,c>} --não tenho certeza Pág. 95 e 96
