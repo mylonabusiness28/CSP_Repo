@@ -1,24 +1,24 @@
 --Exercise 4.8 What are the traces of the following processes?
 
-1. <> , <coin>, <coin, change>, <coin,change,tick>, <coin,ticket>, <coin,ticket,tick>
+--1. <> , <coin>, <coin, change>, <coin,change,tick>, <coin,ticket>, <coin,ticket,tick>
 
-2. <>, <coin>, <coin, change>, <coin,change,ticket>, <coin,change,ticket,tick>, <coin,ticket>,
-   <coin,ticket,change,tick>
+--2. <>, <coin>, <coin, change>, <coin,change,ticket>, <coin,change,ticket,tick>, <coin,ticket>,
+--   <coin,ticket,change,tick>
 
-3. <>, <coin>, <coin,change>, <coin,change,coin>, <coin,change,coin,ticket>, <coin,change,coin,ticket,tick>,
-     <coin,coin>, <coin,coin,change>, <coin,coin,change,ticket>, <coin,coin,change,ticket,tick>, <coin,coin,ticket>,
+--3. <>, <coin>, <coin,change>, <coin,change,coin>, <coin,change,coin,ticket>, <coin,change,coin,ticket,tick>,
+--     <coin,coin>, <coin,coin,change>, <coin,coin,change,ticket>, <coin,coin,change,ticket,tick>, <coin,coin,ticket>,
      <coin,coin,ticket,change>, <coin,coin,ticket,change,tick>
 
 4. <>, <coin>, <coin,change>, <coin,change,coin>, <coin,change,coin,ticket>,  <coin,change,coin,ticket,tick>,
     <coin,change,tick>, <coin,coin>, <coin,coin,ticket>, <coin,coin,ticket,tick>, <coin,ticket>, <coin,ticket,tick>
 
---channel coin, change, ticket
+channel coin, change, ticket
 
---MC = coin -> change -> SKIP
---MC2 = coin -> ticket -> SKIP
+MC = coin -> change -> SKIP
+MC2 = coin -> ticket -> SKIP
 
---EXTERNAL = MC [] MC2
---PARALLEL = MC [{|coin,change|} || {|coin,ticket|}] MC2
---INTERLEAV = MC ||| MC2
---INTERRUPT = MC /\ MC2
+EXTERNAL = MC [] MC2
+PARALLEL = MC [{|coin,change|} || {|coin,ticket|}] MC2
+INTERLEAV = MC ||| MC2
+INTERRUPT = MC /\ MC2
 
