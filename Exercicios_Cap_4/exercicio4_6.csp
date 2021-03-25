@@ -1,8 +1,21 @@
---Exercise 4.6 Simplify each of the following where possible, where ɑ(P) C A:
-1.
+--Exercise 4.6 Simplify each of the following where possible, where alpha(P) C A:
+
+1. traces(P(A) || P(RUN{A tick})) = { tr | A є traces(P(A))
+                                    ˄ tr | є TRACE ˄ σ (tr) contidos <A tick>
+                                    ˄ σ(tr) contidos union(P(A), RUN{A tick})
+
+--Explicação: A combinação paralela de P(A) e RUN{A tick}, exe
+
 2.
 3.
 4.
 5.
 6.
 7.
+
+
+traces(STOP) = {<>}
+traces(SKIP) = {<>, <tick>}
+traces(RUN) = {tr | tr є TRACE}
+tracces(RUN{A}) = {tr | tr є TRACE ˄ σ (tr) contidos A}
+traces(RUN{A tick}) = {tr | tr є TRACE ˄ σ (tr) contidos A} [] {<>, <tick>}

@@ -1,0 +1,34 @@
+------------
+-- BUFFER --
+------------
+
+DATA = {0..5}
+SIZE = 3
+
+channel in, out : DATA
+
+
+BUFFER(i) = B(<>,i)
+
+B(s,i) = if (s == <>)
+         then in?x -> B(<x>,i)
+         else if (#s == i) 
+              then out!head(s) -> B(tail(s),i)
+              else ((out!head(s) -> B(tail(s),i)) [] in?x -> B(s^<x>,i))
+                   |~| out!head(s) -> B(tail(s),i)
+
+
+------------
+-- MIDIA1 -- confiável -- saidas na ordem que recebe --
+------------
+channel c1_1, c2_1 : DATA
+
+MIDIA1 = c1_1?x -> c1_1?y -> c2_1!x -> c2_1!y -> MIDIA1
+
+S1 = B(1,1) -> MIDIA1
+
+R1 = B(2,1) -> MIDIA1
+
+I1 = {| c1_1, c2_1 |}
+PROTOCOLO1 = ((S1 ||| R1) [| I1 |] MIDIA1) \ I1
+assert BUFFER(SIZE) [F= PROTOCOLO1

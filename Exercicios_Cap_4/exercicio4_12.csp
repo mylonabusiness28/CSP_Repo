@@ -1,0 +1,13 @@
+-- Exercise 4.12 Calculate the traces of the recursive process
+
+channel up, down
+
+P = up -> (P [] SKIP); down -> SKIP
+
+<>, <up>, <up,tick>, <down>, <down,tick> ...
+
+traces(P) = {<>} U {<up> ^ tr | tr є traces} U {<down> ^ tr | tr є traces}
+
+--Ou será que é?
+
+traces(P) = {<up,down>i | i є Naturais} U {<up,down>i ^ <up> | i є Naturais}

@@ -1,0 +1,31 @@
+-- Exercise 4.18 Show that (SPY || MASTER) \ {relay} of Example 3.1 is equivalent to
+-- listen?x -> RECORD(x), where RECORD is defined by a mutual recursion
+
+---------------
+--Example 3.1--
+---------------
+
+datatype tipo = T | B 
+channel listen, relay, log : tipo
+
+SPY = listen?x -> relay!x -> SPY
+
+MASTER = relay?y -> log!y -> MASTER
+
+ALPHA_SPY = {|listen,relay|}
+ALPHA_MASTER = {|relay,log|}
+
+HQ = SPY [ALPHA_SPY || ALPHA_MASTER] MASTER \ {relay.T, relay.B} -- escondendo todos os eventos relay
+
+---------------
+-----RECORD----
+---------------
+
+RECORD(x) = listen?y -> log!x -> RECORD(y)
+            [] log!x -> listen?y -> RECORD(y)
+
+P = listen?x -> RECORD(x)
+
+assert P:[deadlock free]
+assert HQ:[deadlock free]
+assert P [T= HQ -- fazendo o teste para provar que (SPY || MASTER) \ {relay} é equivalente ao processo P = listen?x -> RECORD(x)

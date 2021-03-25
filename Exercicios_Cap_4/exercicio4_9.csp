@@ -1,0 +1,19 @@
+--Exercise 4.9 What are the traces of P1, P2, and P1 || P2 of Example 4.13 of Page 101?
+
+Traces de P1
+<>, <a>, <a,x>, <b>, <b,y>
+
+Traces de P2
+<>, <c>, <c,x>, <d>, <d,y>
+
+Traces de P1 || P2
+<>, <a>, <a,c>, <a,c,x>, <a,d>, <b>, <b,c>, <b,d>, <b,d,y>, <c>, <c,a>, <c,a,x>,
+<c,b>, <d>, <d,a>, <d,b,y>
+
+--channel a,b,c,d,x,y
+
+--P1 = a -> x -> STOP [] b -> y -> STOP
+
+--P2 = c -> x -> STOP [] d -> y -> STOP
+
+--PARALLEL = P1 [{|a,b,x,y|} || {|c,d,x,y|}] P2

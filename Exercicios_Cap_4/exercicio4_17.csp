@@ -1,0 +1,22 @@
+-- Exercise 4.17 Rewrite ATT || CUST of Example 2.3 as a recursion which does not contain
+-- any parallel operators.
+
+datatype T = on | off
+channel coat : T
+
+channel store, retrieve, enter, eat
+
+ATT = coat.off -> store -> ATT 
+     [] retrieve -> coat.on -> ATT
+
+ALPHA_ATT = {|coat.off,store, retrieve,coat.on|}
+
+CUST = enter -> coat.off -> eat -> coat.on -> CUST
+
+ALPHA_CUST = {|enter,coat.off,eat,coat.on|}
+
+RESTAURANT = CUST [ALPHA_CUST || ALPHA_ATT] ATT
+RESTAURANT2 = ATT ||| CUST
+
+assert RESTAURANT:[deadlock free]
+assert RESTAURANT2:[deadlock free] 

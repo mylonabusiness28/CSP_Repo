@@ -1,0 +1,26 @@
+--Exercise 4.11 What are the traces of the recursive process TASKS of Example 3.24?
+
+-- Traces de TASK
+-- slide 16 
+-- aula 40min30seg
+-- livro Pág 118
+
+
+traces(TASK) = {<tea,photocopying,filing>i | i є Naturais}  -- cobrindo traces com número impar de elementos
+                U {<tea,photocopying,filing>i ^ <tea,photocopying,filing> | i є Naturais} -- cobrindo traces com número par de elementos
+
+
+
+channel boss, ring
+
+channel tea, photocopying, filing, message, remove_coat, hang_coat
+
+JUNIOR = TASKS /\ ([] x:{ring,boss} @ x -> P(x))
+
+TASKS = tea -> TASKS
+        [] photocopying -> TASKS
+          [] filing -> TASKS
+
+P(ring) = message -> JUNIOR
+
+P(boss) = remove_coat -> hang_coat -> JUNIOR

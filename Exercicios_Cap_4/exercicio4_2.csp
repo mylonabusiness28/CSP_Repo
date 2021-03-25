@@ -15,7 +15,7 @@
                                  U  {<a,b>}
                                  U  {tr | tr є TRACE ˄ σ (tr) contidos <a,b>} --não tenho certeza Pág. 92
 
-6. traces(a -> b -> STOP |~| RUN{a,c}) = {<tau>}
+6. traces(a -> b -> STOP |~| RUN{a,c}) = {<τ>}
                                             U {<a>}
                                             U {<a,b>}
                                             U {tr | tr є TRACE ˄ σ (tr) contidos <a,c>} --não tenho certeza Pág. 95 e 96
