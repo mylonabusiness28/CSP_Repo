@@ -36,5 +36,6 @@ RENAMING_SORT = SORTER [{|v,h|} || {|v',h'|}] SORTER' -- busquei colocar em para
 assert SORTER :[deadlock free]
 assert SORTER':[deadlock free]
 assert SORTER [T= SORTER' -- modelo de traces
+assert SORTER' [T= SORTER
 assert SORTER [F= SORTER' -- modelo de falhas
 assert SORTER [FD= SORTER' -- modelo de falhas-divergencias
