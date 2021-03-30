@@ -1,0 +1,3 @@
+--Exercise 5.11 Specify the requirement that every output value (on channel out) must be
+--less than or equal to some input value (on channel in), in both the property oriented and the
+--process-oriented specification styles.
