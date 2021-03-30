@@ -1,0 +1,34 @@
+--Exercise 5.2 Specify the hygiene requirement that hands should be washed between handling 
+--raw meat and cooked meat. Use the events wash, raw, and cooked, to refer to these three activities.
+
+--datatype STATUS = raw | cooked
+--channel beef: STATUS
+
+channel raw, cooked
+channel wash
+
+BEEF = raw -> cooked -> BEEF
+
+HANDS = raw -> wash -> cooked -> HANDS
+
+HYGIENE = BEEF [{|raw,cooked|} || {|raw,wash,cooked|}] HANDS
+
+----------
+--does the combination RAW |{wash}| COOKED meet your specification?
+----------
+
+RAW = raw -> wash -> RAW
+COOKED = wash -> cooked -> COOKED
+
+HYGIENE2 = RAW [{|raw,wash|} || {|wash,cooked|}] COOKED
+
+assert HYGIENE [T= HYGIENE2
+assert HYGIENE2 [T= HYGIENE
+
+------------
+--RESPOSTA--
+------------
+
+--A combinação RAW || COOKED não corresponde a especificação, porque ela permite que ocorra o contato entre a
+--carne crua e a carne cozida. Na minha especificação não ocorre a possibilidade do contato da mão com a carne
+--cozida antes de ser lavada.

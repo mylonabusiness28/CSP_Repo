@@ -1,0 +1,13 @@
+--Exercise 5.1 Specify that a lift’s doors should not be open when the lift starts moving.
+--Assume that it has events open, close, moving, stopped in its alphabet.
+
+datatype ACT = open | close
+
+channel door: ACT
+channel moving, stopped
+
+DOORS = door.open -> door.close -> DOORS
+
+LIFT = door.open -> door.close -> moving -> stopped -> LIFT
+
+CONTROL = DOORS [{|door|} || {|door,moving,stopped|}] LIFT
