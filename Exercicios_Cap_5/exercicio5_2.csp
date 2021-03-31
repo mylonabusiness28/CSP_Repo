@@ -8,10 +8,17 @@ channel raw, cooked
 channel wash
 
 BEEF = raw -> cooked -> BEEF
+ALPHA_BEEF = {raw, cooked}
 
-HANDS = raw -> wash -> cooked -> HANDS
+HANDS = raw -> wash -> HANDS
+ALPHA_HANDS = {raw,wash}
 
-HYGIENE = BEEF [{|raw,cooked|} || {|raw,wash,cooked|}] HANDS
+CONTROL = wash -> cooked -> CONTROL
+ALPHA_CONTROL = {wash,cooked}
+
+HYGIENE = BEEF [ ALPHA_BEEF || ALPHA_HANDS] HANDS
+
+HYGIENE_CTRL = HYGIENE [union(ALPHA_BEEF,ALPHA_HANDS) || ALPHA_CONTROL] CONTROL
 
 ----------
 --does the combination RAW |{wash}| COOKED meet your specification?
@@ -22,13 +29,15 @@ COOKED = wash -> cooked -> COOKED
 
 HYGIENE2 = RAW [{|raw,wash|} || {|wash,cooked|}] COOKED
 
-assert HYGIENE [T= HYGIENE2
-assert HYGIENE2 [T= HYGIENE
+assert HYGIENE_CTRL [T= HYGIENE2 --não passa
+assert HYGIENE2 [T= HYGIENE_CTRL --passa 
 
 ------------
 --RESPOSTA--
 ------------
 
 --A combinação RAW || COOKED não corresponde a especificação, porque ela permite que ocorra o contato entre a
---carne crua e a carne cozida. Na minha especificação não ocorre a possibilidade do contato da mão com a carne
---cozida antes de ser lavada.
+--carne crua e a carne cozida. Na minha especificação não ocorre a possibilidade do contato da mão suja com a carne
+--cozida.
+
+--aula de traces e refinamento 51min 11seg
