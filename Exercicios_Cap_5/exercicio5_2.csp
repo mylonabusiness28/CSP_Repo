@@ -13,31 +13,36 @@ ALPHA_BEEF = {raw, cooked}
 HANDS = raw -> wash -> HANDS
 ALPHA_HANDS = {raw,wash}
 
-CONTROL = wash -> cooked -> CONTROL
-ALPHA_CONTROL = {wash,cooked}
+CONTROL = raw -> wash -> cooked -> CONTROL
+ALPHA_CONTROL = {raw,wash,cooked}
 
 HYGIENE = BEEF [ ALPHA_BEEF || ALPHA_HANDS] HANDS
 
 HYGIENE_CTRL = HYGIENE [union(ALPHA_BEEF,ALPHA_HANDS) || ALPHA_CONTROL] CONTROL
+
 
 ----------
 --does the combination RAW |{wash}| COOKED meet your specification?
 ----------
 
 RAW = raw -> wash -> RAW
+ALPHA_RAW = {raw,wash}
+
 COOKED = wash -> cooked -> COOKED
+ALPHA_COOKED = {wash,cooked}
 
-HYGIENE2 = RAW [{|raw,wash|} || {|wash,cooked|}] COOKED
+HYGIENE2 = RAW [ALPHA_RAW || ALPHA_COOKED] COOKED
 
-assert HYGIENE_CTRL [T= HYGIENE2 --não passa
-assert HYGIENE2 [T= HYGIENE_CTRL --passa 
 
+assert HYGIENE2 [T= HYGIENE_CTRL --porque?
+assert HYGIENE2 [F= HYGIENE_CTRL
+assert HYGIENE2 [FD= HYGIENE_CTRL
 ------------
 --RESPOSTA--
 ------------
 
---A combinação RAW || COOKED não corresponde a especificação, porque ela permite que ocorra o contato entre a
---carne crua e a carne cozida. Na minha especificação não ocorre a possibilidade do contato da mão suja com a carne
---cozida.
+--A combinação RAW || COOKED não corresponde a especificação, porque ela permite que ocorra o evento raw seguido
+--do evento cooked, ou seja mão suja de carne crua toca carne cozida. Na minha especificação (HYGIENE_CTRL) não ocorre a 
+--possibilidade do contato da mão suja com a carne cozida.
 
 --aula de traces e refinamento 51min 11seg

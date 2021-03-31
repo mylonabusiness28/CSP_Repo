@@ -8,18 +8,13 @@
 
 channel input, output
 
---SPEC(n) = if (n == 0) then input -> SPEC(1)
---          else if (n > 0 and n > 5) 
---          then (output -> SPEC(n - 1) [] input -> SPEC(n + 1))
---          else input -> SPEC(n - 1)
-
-SPEC(n) = if (n == 0 and n < 5)
-          then input -> SPEC(1)
-          else (output -> SPEC(n-1) [] input -> SPEC(n+1))
+SPEC(n) = if (n == 0) then input -> SPEC(1)
+         else if (n > 0 and n < 5) 
+         then (output -> SPEC(n-1) [] input -> SPEC(n+1))
+         else input -> SPEC(n-1)
 
 SPEC_M = SPEC(0)
 
-MACHINE = input -> input -> output -> STOP
+MACHINE = input -> output -> MACHINE
 
-assert MACHINE [T= SPEC_M
 assert SPEC_M [T= MACHINE

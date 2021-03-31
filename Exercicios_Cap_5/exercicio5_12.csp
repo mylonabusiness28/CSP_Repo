@@ -1,0 +1,22 @@
+--Exercise 5.12 Specify the requirement that a write event should always occur between an
+--engage event and a release event, as a property oriented and as a process-oriented specification
+
+--Especificação: O evento write sempre acontece entre os eventos engage e release
+
+channel write, engage, release
+
+SPEC = engage -> write -> release -> SPEC
+ALPHA_SPEC = {engage,write,release}
+
+STEP1 = engage -> write -> STEP1
+ALPHA_STEP1 = {engage,write}
+
+STEP2 = write -> release -> STEP2
+ALPHA_STEP2 = {write,release}
+
+PROCESS = STEP1 [ALPHA_STEP1 || ALPHA_STEP2] STEP2
+
+PROCESS_CTRL = PROCESS [union(ALPHA_STEP1,ALPHA_STEP2) || ALPHA_SPEC] SPEC
+
+assert SPEC [T= PROCESS_CTRL
+assert PROCESS_CTRL [T= SPEC
