@@ -7,7 +7,11 @@ channel door: ACT
 channel moving, stopped
 
 DOORS = door.open -> door.close -> DOORS
+ALPHA_D = {door.open,door.close}
 
 LIFT = door.open -> door.close -> moving -> stopped -> LIFT
+ALPHA_L = {door.open,door.close,moving,stopped}
 
-CONTROL = DOORS [{|door|} || {|door,moving,stopped|}] LIFT
+CONTROL = DOORS [ALPHA_D || ALPHA_L] LIFT
+
+assert LIFT [T= CONTROL

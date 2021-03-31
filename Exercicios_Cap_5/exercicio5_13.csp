@@ -1,0 +1,20 @@
+--Exercise 5.13 Specify that a guard should never be up while a piece of machinery is
+--switched on. A property-oriented specification should be expressed in terms of events
+--guard:up, guard:down, on and off . Express the same specification in a process-oriented way
+
+--Especidicação: o evento guard.up nunca pode ocorrer enquando a maquina estiver ON.
+
+datatype ACT = up | down
+
+channel guard: ACT
+channel on, off
+
+SPEC(n) = if (n == 0) 
+          then guard.down -> on -> SPEC(n+1)
+          else guard.up -> off -> SPEC(n-1)
+
+SPEC_M = SPEC(0)
+
+GUARD = guard.up -> off -> GUARD [] guard.down -> on -> GUARD
+
+assert GUARD [T= SPEC_M
