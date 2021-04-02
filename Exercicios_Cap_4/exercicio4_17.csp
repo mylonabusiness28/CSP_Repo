@@ -25,5 +25,12 @@ assert RESTAURANT:[deadlock free]
 
 RESTAURANT2 = enter -> coat.off -> store -> eat -> retrieve -> coat.on -> RESTAURANT2
 
+ATT_enter = coat.off -> store -> ATT_enter
+
+ATT_leave = retrieve -> coat.on -> ATT_leave
+
+RESTAURANT3 = enter -> ATT_enter -> eat -> ATT_leave -> RESTAURANT3
+
+
 assert RESTAURANT [T= RESTAURANT2
 assert RESTAURANT2 [T= RESTAURANT
