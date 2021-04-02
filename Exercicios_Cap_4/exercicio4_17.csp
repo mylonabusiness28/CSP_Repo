@@ -16,7 +16,14 @@ CUST = enter -> coat.off -> eat -> coat.on -> CUST
 ALPHA_CUST = {|enter,coat.off,eat,coat.on|}
 
 RESTAURANT = CUST [ALPHA_CUST || ALPHA_ATT] ATT
-RESTAURANT2 = ATT ||| CUST
 
 assert RESTAURANT:[deadlock free]
-assert RESTAURANT2:[deadlock free] 
+
+-------------
+--Refazendo--
+-------------
+
+RESTAURANT2 = enter -> coat.off -> store -> eat -> retrieve -> coat.on -> RESTAURANT2
+
+assert RESTAURANT [T= RESTAURANT2
+assert RESTAURANT2 [T= RESTAURANT
